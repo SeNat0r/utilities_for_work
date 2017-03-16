@@ -34,6 +34,6 @@ def config_init():
     return manager, tm
 
 
-manager, vm = config_init()
+manager, thin = config_init()
 
-connect('127.0.0.1')
+connect(thin)
