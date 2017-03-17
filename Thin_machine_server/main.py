@@ -34,12 +34,13 @@ from subprocess import call
 #     a = conn()
 #     test()
 
+# Создание соединения
 class Connection(object):
     def __init__(self, conn):
         self.conn = conn
         self.sock = socket.socket()
-        self.config = configparser.RawConfigParser()
 
+    # Слушаем сокет
     def open_connection(self):
         self.sock.bind(('', 9595))
         self.sock(2)
@@ -47,3 +48,19 @@ class Connection(object):
         data = conn.recv(1024).decode()
         return data
 
+
+# Работа с конфигом
+class Config(object):
+    def __init__(self, addr):
+        self.config = configparser.RawConfigParser()
+        self.addr = addr
+
+    def init_config(self):
+        pass
+
+
+# Действие на тонком клиенте
+class Action(object):
+    @staticmethod
+    def test():
+        call('rundll32.exe user32.dll,LockWorkStation', shell=False)
