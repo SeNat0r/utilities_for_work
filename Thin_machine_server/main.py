@@ -36,11 +36,14 @@ from subprocess import call
 
 # Создание соединения
 class Connection(object):
-    def __init__(self, data, port, destination):
-        self.sock = socket.socket()
-        self.data = data
+    sock = socket.socket()
+    destination = []
+
+    def __init__(self, port, destination):
+        # self.sock = socket.socket()
+        # self.data = data
         self.port = port
-        self.destination = destination
+        # self.destination = destination
 
     # Слушаем сокет
     def listen(self):

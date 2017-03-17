@@ -41,6 +41,7 @@ import configparser
 # Создание соединения
 class Connection(object):
     sock = socket.socket()
+
     def __init__(self, port):
         # self.sock = socket.socket()
         # self.data = data
