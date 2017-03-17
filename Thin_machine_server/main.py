@@ -36,11 +36,11 @@ from subprocess import call
 
 # Создание соединения
 class Connection(object):
-    def __init__(self, conn, data, port):
-        self.conn = conn
+    def __init__(self, data, port, destination):
         self.sock = socket.socket()
         self.data = data
         self.port = port
+        self.destination = destination
 
     # Слушаем сокет
     def listen(self):
@@ -51,8 +51,8 @@ class Connection(object):
         return data
 
     # Отправка данных
-    def send(self, addr, data):
-        with self.sock.connect((addr, self.port)):
+    def send(self, data):
+        with self.sock.connect((self.destination, self.port)):
             self.sock.send(data.encode())
 
 
