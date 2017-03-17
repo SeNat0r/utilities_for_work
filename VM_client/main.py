@@ -63,8 +63,12 @@ class Connection(object):
 # Работа с конфигом
 class Config(object):
     def __init__(self, addr):
-        self.config = configparser.RawConfigParser()
         self.addr = addr
 
-    def init_config(self):
-        pass
+    @staticmethod
+    def get_config():
+        config = configparser.RawConfigParser()
+        config.read('default.ini')
+        manager = config.get('DEFAULT', 'manager')
+        tc = config.get('DEFAULT', 'thin_client')
+        return manager, tc
