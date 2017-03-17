@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Shutdown_manager" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Thin_machine" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/VM_client" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Thin_machine_server" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
