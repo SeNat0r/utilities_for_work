@@ -40,15 +40,16 @@ import configparser
 
 # Создание соединения
 class Connection(object):
-    def __init__(self, data, port, destination):
-        self.sock = socket.socket()
-        self.data = data
+    sock = socket.socket()
+    def __init__(self, port):
+        # self.sock = socket.socket()
+        # self.data = data
         self.port = port
-        self.destination = destination
 
     # Слушаем сокет
     def listen(self):
         self.sock.bind(('', self.port))
+        print(self.sock)
         self.sock(2)
         conn, addr = self.sock.accept()
         data = conn.recv(1024).decode()
@@ -72,3 +73,17 @@ class Config(object):
         manager = config.get('DEFAULT', 'manager')
         tc = config.get('DEFAULT', 'thin_client')
         return manager, tc
+
+    def edit_config_tc(self):
+        config = configparser.RawConfigParser()
+        config.read('default.ini')
+        config.set('DEFAULT', 'thin_client', self.addr)
+        with open('default.ini', 'w') as configfile:
+            config.write(configfile)
+
+
+comm = Connection(9595)
+while True:
+    a = comm.listen()
+    Config.addr = a
+    Config.edit_config_tc()

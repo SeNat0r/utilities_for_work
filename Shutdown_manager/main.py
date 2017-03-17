@@ -4,11 +4,12 @@ import socket
 
 # Создание соединения
 class Connection(object):
-    def __init__(self, data, port, destination):
+    destination = []
+
+    def __init__(self, port):
         self.sock = socket.socket()
-        self.data = data
+        # self.data = data
         self.port = port
-        self.destination = destination
 
     # Слушаем сокет
     def listen(self):
@@ -19,26 +20,32 @@ class Connection(object):
         return data
 
     # Отправка данных
-    def send(self, data):
-        with self.sock.connect((self.destination, self.port)):
+    def send(self, data, dest):
+        with self.sock.connect((dest, self.port)):
             self.sock.send(data.encode())
 
 
 # Действия
 class Action(object):
-    def __init__(self, conn):
-        self.conn = conn
+    # def __init__(self, conn):
+    #     self.conn = conn
+
+    @staticmethod
+    def get_tc(conn):
+        for idx in storage.all_idx(conn):
+            Connection.destination.append(idx)
+            # Connection.send(idx['TC_ip'])
 
     # Отправка значений конфига виртуальной машине
-    def send_tc_ip(self):
-        for idx in storage.all_idx(self.conn):
-            Connection.destination = idx['VM_ip']
-            Connection.send(idx['TC_ip'])
+    @staticmethod
+    def send_tc_ip(comm):
+        for i in Connection.destination:
+            Connection.send(comm, i['TC_ip'], i['VM_ip'])
 
 
 conn = storage.connect('base.db')
 storage.initialize(conn)
-Connection.port = 9595
-Action.conn = conn
-Action.send_tc_ip()
-
+comm = Connection(9595)
+Action.get_tc(conn)
+print(Connection.destination)
+Action.send_tc_ip(comm)
