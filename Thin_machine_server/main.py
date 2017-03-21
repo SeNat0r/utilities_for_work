@@ -42,13 +42,13 @@ class Connection(object):
 
 
 # Работа с конфигом
-class Config(object):
-    def __init__(self, addr):
-        self.config = configparser.RawConfigParser()
-        self.addr = addr
-
-    def init_config(self):
-        pass
+# class Config(object):
+#     def __init__(self, addr):
+#         self.config = configparser.RawConfigParser()
+#         self.addr = addr
+#
+#     def init_config(self):
+#         pass
 
 
 # Действие на тонком клиенте
