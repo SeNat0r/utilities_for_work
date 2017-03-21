@@ -35,11 +35,6 @@ class Connection(object):
         data = conn.recv(1024).decode()
         return data
 
-    # Отправка данных
-    # def send(self, data):
-    #     with self.sock.connect((self.destination, self.port)):
-    #         self.sock.send(data.encode())
-
 
 # Работа с конфигом
 # class Config(object):
