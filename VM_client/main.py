@@ -32,46 +32,61 @@ import configparser
 
 # Создание соединения
 class Connection(object):
-    def __init__(self, port, destination):
+    def __init__(self, port):
         self.__sock = socket.socket()
         self.port = port
-        self.destination = destination
 
-    # Слушаем сокет
-    def __do_listen(self):
+    # Биндим интерфейс, порт
+    # Слушаем макс 2 соединения
+    # получаем и декодируем пакеты по 1024 байта
+    def do_listen(self):
+        """Прослушка сокета"""
         self.__sock.bind(('', self.port))
         self.__sock.listen(2)
         conn, addr = self.__sock.accept()
         data = conn.recv(1024).decode()
         return data
 
-    # Отправка данных
+    # Устанавливаем соединение (адрес, порт)
+    # Кодируем и посылаем данные
+    # Закрываем соединение
     def send(self, data):
+        """Отправка данных"""
         self.__sock.connect((self.destination, self.port))
         self.__sock.send(data.encode())
         self.__sock.close()
 
 
 # Работа с конфигом
-# class Config(object):
-#     def __init__(self, addr):
-#         self.addr = addr
-#
-#     @staticmethod
-#     def get_config():
-#         config = configparser.RawConfigParser()
-#         config.read('default.ini')
-#         manager = config.get('DEFAULT', 'manager')
-#         tc = config.get('DEFAULT', 'thin_client')
-#         return manager, tc
-#
-#     def edit_config_tc(self):
-#         config = configparser.RawConfigParser()
-#         config.read('default.ini')
-#         config.set('DEFAULT', 'thin_client', self.addr)
-#         with open('default.ini', 'w') as configfile:
-#             config.write(configfile)
+class Config(object):
+    # def __init__(self, addr):
+    #     self.addr = addr
+
+    @staticmethod
+    def get_config():
+        """Получение значений конфигураций из ini файла"""
+        config = configparser.RawConfigParser()
+        config.read('default.ini')
+        manager = config.get('DEFAULT', 'manager')
+        tc = config.get('DEFAULT', 'thin_client')
+        # return manager, tc
+        return tc
+
+        # def edit_config_tc(self):
+        #     config = configparser.RawConfigParser()
+        #     config.read('default.ini')
+        #     config.set('DEFAULT', 'thin_client', self.addr)
+        #     with open('default.ini', 'w') as configfile:
+        #         config.write(configfile)
 
 
-a = Connection(9596, '192.168.1.78')
-a.send('2')
+class Action(object):
+    @staticmethod
+    def start(port):
+        """Отправка команды на удаленный сервер"""
+        cmd = input()
+        addr = Config.get_config()
+        c = Connection(port, addr)
+
+
+Action.start(9596)
