@@ -1,6 +1,6 @@
 import sqlite3
 
-SQL_SELECT = '''SELECT id, NetBIOS_TC, TC_ip, VM_ip FROM manager'''
+SQL_SELECT = '''SELECT id, host_name, TC_ip, VM_ip FROM manager'''
 
 
 def dict_factory(cursor, row):
@@ -16,7 +16,7 @@ def initialize(conn):
         cursor = conn.executescript('''
             CREATE TABLE IF NOT EXISTS manager (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                NetBIOS_TC TEXT NOT NULL DEFAULT '',
+                host_name TEXT NOT NULL DEFAULT '',
                 TC_ip TEXT NOT NULL DEFAULT '',
                 VM_ip TEXT NOT NULL DEFAULT ''
             )
@@ -35,10 +35,10 @@ def connect(db_name=None):
     return conn
 
 
-def add_comm(conn, netbios_tc, tc_ip):
+def add_communication(conn, netbios_tc, tc_ip):
     with conn:
         cursor = conn.execute('''
-            INSERT INTO manager (NetBIOS_TC, TC_ip) VALUES (?,?)
+            INSERT INTO manager (host_name, TC_ip) VALUES (?,?)
         ''', (netbios_tc, tc_ip))
 
 

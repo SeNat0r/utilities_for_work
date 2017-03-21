@@ -40,26 +40,26 @@ import configparser
 
 # Создание соединения
 class Connection(object):
-    sock = socket.socket()
-
-    def __init__(self, port):
-        # self.sock = socket.socket()
-        # self.data = data
+    def __init__(self, port, destination):
+        self.__sock = socket.socket()
         self.port = port
+        self.destination = destination
 
     # Слушаем сокет
-    def listen(self):
-        self.sock.bind(('', self.port))
-        print(self.sock)
-        self.sock(2)
-        conn, addr = self.sock.accept()
+    def __do_listen(self):
+        self.__sock.bind(('', self.port))
+        self.__sock.listen(2)
+        conn, addr = self.__sock.accept()
         data = conn.recv(1024).decode()
         return data
 
     # Отправка данных
     def send(self, data):
-        with self.sock.connect((self.destination, self.port)):
-            self.sock.send(data.encode())
+        # with self.sock.connect((self.destination, self.port)):
+        #     self.sock.send(data.encode())
+        self.__sock.connect((self.destination, self.port))
+        self.__sock.send(data.encode())
+        self.__sock.close()
 
 
 # Работа с конфигом
@@ -83,8 +83,5 @@ class Config(object):
             config.write(configfile)
 
 
-comm = Connection(9595)
-while True:
-    a = comm.listen()
-    Config.addr = a
-    Config.edit_config_tc()
+a = Connection(9596, '192.168.1.78')
+a.send('2')

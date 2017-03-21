@@ -5,11 +5,12 @@ import socket
 # Создание соединения
 class Connection(object):
     destination = []
+    port = 9595
 
-    def __init__(self, port):
+    def __init__(self):
         self.sock = socket.socket()
         # self.data = data
-        self.port = port
+
 
     # Слушаем сокет
     def listen(self):
@@ -45,7 +46,7 @@ class Action(object):
 
 conn = storage.connect('base.db')
 storage.initialize(conn)
-comm = Connection(9595)
+
 Action.get_tc(conn)
 print(Connection.destination)
 Action.send_tc_ip(comm)

@@ -3,19 +3,6 @@ import socket
 from subprocess import call
 
 
-# def test():
-#     call('rundll32.exe user32.dll,LockWorkStation', shell=False)
-#
-#
-# def conn():
-#     sock = socket.socket()
-#     sock.bind(('', 9595))
-#     sock.listen(2)
-#     conn, addr = sock.accept()
-#     data = conn.recv(1024).decode()
-#     return data
-#
-#
 # def manager_edit(addr):
 #     config = configparser.RawConfigParser()
 #     config.read('default.ini')
@@ -30,33 +17,28 @@ from subprocess import call
 #     manager = config.get('DEFAULT', 'manager')
 #     return manager
 #
-# while True:
-#     a = conn()
-#     test()
 
 # Создание соединения
 class Connection(object):
-    sock = socket.socket()
-    destination = []
-
-    def __init__(self, port, destination):
-        # self.sock = socket.socket()
-        # self.data = data
+    def __init__(self, port):
+        self.__sock = socket.socket()
         self.port = port
-        # self.destination = destination
 
-    # Слушаем сокет
-    def listen(self):
-        self.sock.bind(('', self.port))
-        self.sock(2)
-        conn, addr = self.sock.accept()
+    # Биндим интерфейс, порт
+    # Слушаем макс 2 соединения
+    # получаем и декодируем пакеты по 1024 байта
+    def do_listen(self):
+        """Прослушка сокета"""
+        self.__sock.bind(('', self.port))
+        self.__sock.listen(2)
+        conn, addr = self.__sock.accept()
         data = conn.recv(1024).decode()
         return data
 
     # Отправка данных
-    def send(self, data):
-        with self.sock.connect((self.destination, self.port)):
-            self.sock.send(data.encode())
+    # def send(self, data):
+    #     with self.sock.connect((self.destination, self.port)):
+    #         self.sock.send(data.encode())
 
 
 # Работа с конфигом
@@ -72,5 +54,35 @@ class Config(object):
 # Действие на тонком клиенте
 class Action(object):
     @staticmethod
-    def test():
-        call('rundll32.exe user32.dll,LockWorkStation', shell=False)
+    def action_block():
+        """Закрытие соединения"""
+        call('TASKKILL /IM "wfica32.exe"', shell=False)
+
+    @staticmethod
+    def action_off():
+        """Закрытие соединения + гибернация тонкого клиента"""
+        call('TASKKILL /IM "wfica32.exe"', shell=False)
+        call('shutdown /h /f -t 5', shell=False)
+
+    @classmethod
+    def do(cls, data):
+        """Разрешенные действия"""
+        actions = {
+            '1': cls.action_block,
+            '2': cls.action_off,
+            '3': cls.action_off
+        }
+        action = actions.get(data)
+        if action:
+            return action()
+
+    @staticmethod
+    def start(port):
+        """Запуск сервера"""
+        while True:
+            conn = Connection(port)
+            d = conn.do_listen()
+            Action.do(d)
+
+Action.start(9596)
+
