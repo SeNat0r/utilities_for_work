@@ -19,10 +19,11 @@ from subprocess import call
 #
 
 # Создание соединения
-class Connection(object):
+class Socket(object):
     def __init__(self, port):
         self.__sock = socket.socket()
         self.port = port
+        self.conn = '127.0.0.1'
 
     # Биндим интерфейс, порт
     # Слушаем макс 2 соединения
@@ -34,6 +35,30 @@ class Connection(object):
         conn, addr = self.__sock.accept()
         data = conn.recv(1024).decode()
         return data
+
+    def send(self, data):
+        """Отправка данных"""
+        self.__sock.connect((self.conn, self.port))
+        self.__sock.send(data.encode())
+        self.__sock.close()
+
+    def check(self):
+        s = socket.socket()
+        try:
+            s.connect((self.conn, self.port))
+            return True
+        except Exception as e:
+            pass
+
+
+class Manager(object):
+    def __init__(self, s, key=666):
+        self.manager_key = key
+        self.sock = s
+
+    def connect_check(self):
+
+
 
 
 # Работа с конфигом
@@ -48,6 +73,12 @@ class Connection(object):
 
 # Действие на тонком клиенте
 class Server(object):
+    def __init__(self, name, ip, port):
+        self.name = name
+        self.ip = ip
+        self.port = port
+        self.action_key = 123
+
     @staticmethod
     def action_block():
         """Закрытие соединения"""
@@ -71,13 +102,9 @@ class Server(object):
         if action:
             return action()
 
-    @staticmethod
-    def start(port):
+    def start(self):
         """Запуск сервера"""
         while True:
-            conn = Connection(port)
+            conn = Socket(self.port)
             d = conn.listen()
             Server.do(d)
-
-Server.start(9596)
-

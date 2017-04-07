@@ -3,50 +3,48 @@ import socket
 
 
 # Создание соединения
-class Connection(object):
-    destination = []
-    port = 9595
+class Socket(object):
+    def __init__(self, port):
+        self.__sock = socket.socket()
+        self.port = port
 
-    def __init__(self):
-        self.sock = socket.socket()
-        # self.data = data
-
-
-    # Слушаем сокет
     def listen(self):
-        self.sock.bind(('', self.port))
-        self.sock(2)
-        conn, addr = self.sock.accept()
+        """Прослушка сокета"""
+        self.__sock.bind(('', self.port))
+        self.__sock.listen(2)
+        conn, addr = self.__sock.accept()
         data = conn.recv(1024).decode()
         return data
 
-    # Отправка данных
-    def send(self, data, dest):
-        with self.sock.connect((dest, self.port)):
-            self.sock.send(data.encode())
+    def send(self, data, conn):
+        """Отправка данных"""
+        self.__sock.connect((conn, self.port))
+        self.__sock.send(data.encode())
+        self.__sock.close()
 
 
 # Действия
 class Manager(object):
-    # def __init__(self, conn):
-    #     self.conn = conn
+    def __init__(self):
+        self.manager_key = 666
 
     @staticmethod
     def get_tc(conn):
         for idx in storage.all_idx(conn):
-            Connection.destination.append(idx)
+            Socket.destination.append(idx)
             # Connection.send(idx['TC_ip'])
 
     # Отправка значений конфига виртуальной машине
     @staticmethod
     def send_tc_ip(comm):
-        for i in Connection.destination:
-            Connection.send(comm, i['TC_ip'], i['VM_ip'])
+        for i in Socket.destination:
+            Socket.send(comm, i['TC_ip'], i['VM_ip'])
 
+#
+# conn = storage.connect('base.db')
+# storage.initialize(conn)
 
-conn = storage.connect('base.db')
-storage.initialize(conn)
-
-Manager.get_tc(conn)
-print(Connection.destination)
-Manager.send_tc_ip(comm)
+s = Socket(9595)
+while True:
+    data = s.listen()
+    print(data)
