@@ -26,7 +26,7 @@ class Socket(object):
 # Действия
 class Manager(object):
     def __init__(self):
-        self.manager_key = 666
+        self.manager_key = '666'
 
     @staticmethod
     def get_tc(conn):
@@ -45,6 +45,11 @@ class Manager(object):
 # storage.initialize(conn)
 
 s = Socket(9595)
+m = Manager()
 while True:
     data = s.listen()
     print(data)
+    if data['type'] == 'server' and data['check']:
+        s.send(m.manager_key)
+
+

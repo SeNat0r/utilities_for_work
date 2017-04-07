@@ -23,7 +23,7 @@ class Socket(object):
     def __init__(self, port):
         self.__sock = socket.socket()
         self.port = port
-        self.conn = '127.0.0.1'
+        self.conn = '192.168.0.201'
 
     # Биндим интерфейс, порт
     # Слушаем макс 2 соединения
@@ -52,11 +52,17 @@ class Socket(object):
 
 
 class Manager(object):
-    def __init__(self, s, key=666):
+    def __init__(self, s, key='666'):
         self.manager_key = key
         self.sock = s
 
     def connect_check(self):
+        d = {'type': 'server', 'check': 1}
+        self.sock.send(d)
+        resp = self.sock.listen()
+        if resp == self.manager_key:
+            print('True')
+            return True
 
 
 
@@ -108,3 +114,6 @@ class Server(object):
             conn = Socket(self.port)
             d = conn.listen()
             Server.do(d)
+
+s = Socket(9595)
+m = Manager(s)
