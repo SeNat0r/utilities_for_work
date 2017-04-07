@@ -27,7 +27,7 @@ class Connection(object):
     # Биндим интерфейс, порт
     # Слушаем макс 2 соединения
     # получаем и декодируем пакеты по 1024 байта
-    def do_listen(self):
+    def listen(self):
         """Прослушка сокета"""
         self.__sock.bind(('', self.port))
         self.__sock.listen(2)
@@ -47,7 +47,7 @@ class Connection(object):
 
 
 # Действие на тонком клиенте
-class Action(object):
+class Server(object):
     @staticmethod
     def action_block():
         """Закрытие соединения"""
@@ -76,8 +76,8 @@ class Action(object):
         """Запуск сервера"""
         while True:
             conn = Connection(port)
-            d = conn.do_listen()
-            Action.do(d)
+            d = conn.listen()
+            Server.do(d)
 
-Action.start(9596)
+Server.start(9596)
 

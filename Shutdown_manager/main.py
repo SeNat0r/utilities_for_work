@@ -27,7 +27,7 @@ class Connection(object):
 
 
 # Действия
-class Action(object):
+class Manager(object):
     # def __init__(self, conn):
     #     self.conn = conn
 
@@ -47,6 +47,6 @@ class Action(object):
 conn = storage.connect('base.db')
 storage.initialize(conn)
 
-Action.get_tc(conn)
+Manager.get_tc(conn)
 print(Connection.destination)
-Action.send_tc_ip(comm)
+Manager.send_tc_ip(comm)
