@@ -6,7 +6,7 @@ from subprocess import call
 # Создание соединения
 class Socket(object):
     def __init__(self, port):
-        self.destination = ('127.0.0.1', port)
+        self.destination = ('', port)
 
     # Биндим интерфейс, порт
     # Слушаем макс 2 соединения
@@ -16,7 +16,7 @@ class Socket(object):
         with socket.socket() as s:
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind(self.destination)
-            s.listen(5)
+            s.listen(2)
 
             while True:
                 conn, adr = s.accept()
