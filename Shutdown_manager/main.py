@@ -4,24 +4,33 @@ import socket
 
 # Создание соединения
 class Socket(object):
-    __sock = socket.socket()
-
     def __init__(self, port):
-        self.port = port
+        self.destination = ('127.0.0.1', port)
 
+    # Биндим интерфейс, порт
+    # Слушаем макс 2 соединения
+    # получаем и декодируем пакеты по 1024 байта
     def listen(self):
         """Прослушка сокета"""
-        self.__sock.bind(('', self.port))
-        self.__sock.listen(5)
-        conn, adr = self.__sock.accept()
-        data = conn.recv(1024).decode()
-        return data
+        with socket.socket() as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.bind(self.destination)
+            s.listen(2)
 
-    def send(self, data, conn):
+            while True:
+                conn, adr = s.accept()
+
+                with conn:
+                    data = conn.recv(1024).decode()
+                    if data:
+                        print(data)
+                        return data
+
+    def send(self, data):
         """Отправка данных"""
-        self.__sock.connect((conn, self.port))
-        self.__sock.send(data.encode())
-        self.__sock.close()
+        with socket.socket() as s:
+            s.connect(self.destination)
+            s.send(data.encode())
 
 
 # Действия
@@ -46,7 +55,4 @@ class Manager(object):
 # storage.initialize(conn)
 
 s = Socket(9696)
-m = Manager()
-
-
-
+s.send('atata')

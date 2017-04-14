@@ -6,7 +6,6 @@ from subprocess import call
 # Создание соединения
 class Socket(object):
     def __init__(self, port):
-        # self.__sock = socket.socket()
         self.destination = ('127.0.0.1', port)
 
     # Биндим интерфейс, порт
@@ -14,36 +13,33 @@ class Socket(object):
     # получаем и декодируем пакеты по 1024 байта
     def listen(self):
         """Прослушка сокета"""
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        with socket.socket() as s:
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind(self.destination)
-            s.listen(2)
+            s.listen(5)
 
-        while True:
-            conn, adr = s.accept()
+            while True:
+                conn, adr = s.accept()
 
-            with conn:
-                data = conn.recv(1024).decode()
-                if data:
-                    print(data)
-                    return data
+                with conn:
+                    data = conn.recv(1024).decode()
+                    if data:
+                        print(data)
+                        return data
 
     def connect(self, data):
         """Отправка данных"""
-        # self.__sock.connect((self.conn, self.port))
-        # self.__sock.send(data.encode())
-        # self.__sock.close()
         with socket.socket():
             s.connect(self.destination)
             s.send(data.encode())
 
-    # def check(self):
-    #     s = socket.socket()
-    #     try:
-    #         s.connect((self.conn, self.port))
-    #         return True
-    #     except Exception as e:
-    #         pass
+            # def check(self):
+            #     s = socket.socket()
+            #     try:
+            #         s.connect((self.conn, self.port))
+            #         return True
+            #     except Exception as e:
+            #         pass
 
 
 class Manager(object):
@@ -59,8 +55,6 @@ class Manager(object):
         # if resp == self.manager_key:
         #     print('True')
         #     return True
-
-
 
 
 # Работа с конфигом
@@ -111,7 +105,6 @@ class Server(object):
             d = conn.listen()
             Server.do(d)
 
+
 s = Socket(9698)
 s.listen()
-
-
