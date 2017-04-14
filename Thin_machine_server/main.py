@@ -18,16 +18,16 @@ class Socket(object):
             s.bind(self.destination)
             s.listen(2)
 
-            while True:
-                conn, adr = s.accept()
+            # while True:
+            #     conn, adr = s.accept()
+            #
+            #     with conn:
+            #         data = conn.recv(1024).decode()
+            #         if data:
+            #             print(data)
+            #             return data
 
-                with conn:
-                    data = conn.recv(1024).decode()
-                    if data:
-                        print(data)
-                        return data
-
-    def connect(self, data):
+    def send(self, data):
         """Отправка данных"""
         with socket.socket():
             s.connect(self.destination)
@@ -51,10 +51,10 @@ class Manager(object):
         # d = {'type': 'server', 'check': '1'}
         d = '111'
         self.sock.send(d)
-        # resp = self.sock.listen()
-        # if resp == self.manager_key:
-        #     print('True')
-        #     return True
+        resp = self.sock.listen()
+        if resp == self.manager_key:
+            print('True')
+            return True
 
 
 # Работа с конфигом
@@ -102,9 +102,10 @@ class Server(object):
         """Запуск сервера"""
         while True:
             conn = Socket(self.port)
-            d = conn.listen()
+            d = conn.get_data()
             Server.do(d)
 
 
-s = Socket(9698)
-s.listen()
+s = Socket(9696)
+m = Manager(s)
+

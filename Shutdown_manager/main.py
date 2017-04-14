@@ -17,14 +17,14 @@ class Socket(object):
             s.bind(self.destination)
             s.listen(2)
 
-            while True:
-                conn, adr = s.accept()
-
-                with conn:
-                    data = conn.recv(1024).decode()
-                    if data:
-                        print(data)
-                        return data
+            # while True:
+            #     conn, adr = s.accept()
+            #
+            #     with conn:
+            #         data = conn.recv(1024).decode()
+            #         if data:
+            #             print(data)
+            #             return data
 
     def send(self, data):
         """Отправка данных"""
