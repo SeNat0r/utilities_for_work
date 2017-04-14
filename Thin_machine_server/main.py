@@ -6,32 +6,22 @@ from subprocess import call
 # Создание соединения
 class Socket(object):
     def __init__(self, port):
-        self.destination = ('', port)
+        self.destination = ('127.0.0.1', port)
 
-    # Биндим интерфейс, порт
-    # Слушаем макс 2 соединения
-    # получаем и декодируем пакеты по 1024 байта
-    def listen(self):
-        """Прослушка сокета"""
-        with socket.socket() as s:
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.bind(self.destination)
-            s.listen(2)
-
-            # while True:
-            #     conn, adr = s.accept()
-            #
-            #     with conn:
-            #         data = conn.recv(1024).decode()
-            #         if data:
-            #             print(data)
-            #             return data
+    def connect(self):
+        """Создание соединения"""
+        s = socket.socket()
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(self.destination)
+        s.listen(2)
+        conn, adr = s.accept()
+        return conn
 
     def send(self, data):
         """Отправка данных"""
-        with socket.socket():
-            s.connect(self.destination)
-            s.send(data.encode())
+        s = socket.socket()
+        s.connect(self.destination)
+        s.send(data.encode())
 
             # def check(self):
             #     s = socket.socket()
@@ -51,10 +41,13 @@ class Manager(object):
         # d = {'type': 'server', 'check': '1'}
         d = '111'
         self.sock.send(d)
-        resp = self.sock.listen()
-        if resp == self.manager_key:
-            print('True')
-            return True
+
+        while True:
+            with self.sock.connect() as conn:
+                resp = conn.recv(1024).decode()
+                if resp == self.manager_key:
+                    return True
+                return False
 
 
 # Работа с конфигом
@@ -105,7 +98,7 @@ class Server(object):
             d = conn.get_data()
             Server.do(d)
 
-
+#
 s = Socket(9696)
 m = Manager(s)
-
+print(m.connect_check())
