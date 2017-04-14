@@ -3,52 +3,47 @@ import socket
 from subprocess import call
 
 
-# def manager_edit(addr):
-#     config = configparser.RawConfigParser()
-#     config.read('default.ini')
-#     config.set('DEFAULT', 'manager', addr)
-#     with open('default.ini', 'w') as configfile:
-#         config.write(configfile)
-#
-#
-# def config_init():
-#     config = configparser.RawConfigParser()
-#     config.read('default.ini')
-#     manager = config.get('DEFAULT', 'manager')
-#     return manager
-#
-
 # Создание соединения
 class Socket(object):
     def __init__(self, port):
-        self.__sock = socket.socket()
-        self.port = port
-        self.conn = '192.168.0.201'
+        # self.__sock = socket.socket()
+        self.destination = ('127.0.0.1', port)
 
     # Биндим интерфейс, порт
     # Слушаем макс 2 соединения
     # получаем и декодируем пакеты по 1024 байта
     def listen(self):
         """Прослушка сокета"""
-        self.__sock.bind(('', self.port))
-        self.__sock.listen(2)
-        conn, addr = self.__sock.accept()
-        data = conn.recv(1024).decode()
-        return data
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.bind(self.destination)
+            s.listen(2)
 
-    def send(self, data):
+        while True:
+            conn, adr = s.accept()
+
+            with conn:
+                data = conn.recv(1024).decode()
+                if data:
+                    print(data)
+                    return data
+
+    def connect(self, data):
         """Отправка данных"""
-        self.__sock.connect((self.conn, self.port))
-        self.__sock.send(data.encode())
-        self.__sock.close()
+        # self.__sock.connect((self.conn, self.port))
+        # self.__sock.send(data.encode())
+        # self.__sock.close()
+        with socket.socket():
+            s.connect(self.destination)
+            s.send(data.encode())
 
-    def check(self):
-        s = socket.socket()
-        try:
-            s.connect((self.conn, self.port))
-            return True
-        except Exception as e:
-            pass
+    # def check(self):
+    #     s = socket.socket()
+    #     try:
+    #         s.connect((self.conn, self.port))
+    #         return True
+    #     except Exception as e:
+    #         pass
 
 
 class Manager(object):
@@ -57,12 +52,13 @@ class Manager(object):
         self.sock = s
 
     def connect_check(self):
-        d = {'type': 'server', 'check': 1}
+        # d = {'type': 'server', 'check': '1'}
+        d = '111'
         self.sock.send(d)
-        resp = self.sock.listen()
-        if resp == self.manager_key:
-            print('True')
-            return True
+        # resp = self.sock.listen()
+        # if resp == self.manager_key:
+        #     print('True')
+        #     return True
 
 
 
@@ -115,5 +111,7 @@ class Server(object):
             d = conn.listen()
             Server.do(d)
 
-s = Socket(9595)
-m = Manager(s)
+s = Socket(9698)
+s.listen()
+
+

@@ -4,15 +4,16 @@ import socket
 
 # Создание соединения
 class Socket(object):
+    __sock = socket.socket()
+
     def __init__(self, port):
-        self.__sock = socket.socket()
         self.port = port
 
     def listen(self):
         """Прослушка сокета"""
         self.__sock.bind(('', self.port))
-        self.__sock.listen(2)
-        conn, addr = self.__sock.accept()
+        self.__sock.listen(5)
+        conn, adr = self.__sock.accept()
         data = conn.recv(1024).decode()
         return data
 
@@ -28,28 +29,24 @@ class Manager(object):
     def __init__(self):
         self.manager_key = '666'
 
-    @staticmethod
-    def get_tc(conn):
-        for idx in storage.all_idx(conn):
-            Socket.destination.append(idx)
-            # Connection.send(idx['TC_ip'])
-
-    # Отправка значений конфига виртуальной машине
-    @staticmethod
-    def send_tc_ip(comm):
-        for i in Socket.destination:
-            Socket.send(comm, i['TC_ip'], i['VM_ip'])
+    # @staticmethod
+    # def get_tc(conn):
+    #     for idx in storage.all_idx(conn):
+    #         Socket.destination.append(idx)
+    #         # Connection.send(idx['TC_ip'])
+    #
+    # # Отправка значений конфига виртуальной машине
+    # @staticmethod
+    # def send_tc_ip(comm):
+    #     for i in Socket.destination:
+    #         Socket.send(comm, i['TC_ip'], i['VM_ip'])
 
 #
 # conn = storage.connect('base.db')
 # storage.initialize(conn)
 
-s = Socket(9595)
+s = Socket(9696)
 m = Manager()
-while True:
-    data = s.listen()
-    print(data)
-    if data['type'] == 'server' and data['check']:
-        s.send(m.manager_key)
+
 
 
