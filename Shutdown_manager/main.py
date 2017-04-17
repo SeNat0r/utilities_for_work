@@ -1,5 +1,6 @@
 from manager import storage
 import socket
+import pickle
 
 
 # Создание соединения
@@ -22,7 +23,8 @@ class Socket(object):
         """Отправка данных"""
         s = socket.socket()
         s.connect((adr, self.port))
-        s.send(data.encode())
+        pi_data = pickle.dumps(data)
+        s.send(pi_data)
 
 
 # Действия
@@ -38,8 +40,9 @@ class Server(object):
     def listen(self):
         while True:
             with self.sock.connect() as conn:
-                d = conn.recv(1024).decode()
-                if d == '111':
+                d = conn.recv(1024)
+                pi_data = pickle.loads(d)
+                if pi_data[0] == 'server':
                     self.connect_check()
 
     def connect_check(self):

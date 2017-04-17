@@ -1,6 +1,7 @@
 import configparser
 import socket
 from subprocess import call
+import pickle
 
 
 # Создание соединения
@@ -12,7 +13,7 @@ class Socket(object):
         """Создание соединения"""
         s = socket.socket()
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(('', 9696))
+        s.bind(('', self.port))
         s.listen(2)
         conn, adr = s.accept()
         # print('адрес:', adr)
@@ -22,7 +23,8 @@ class Socket(object):
         """Отправка данных"""
         s = socket.socket()
         s.connect((adr, self.port))
-        s.send(data.encode())
+        pi_data = pickle.dumps(data)
+        s.send(pi_data)
 
             # def check(self):
             #     s = socket.socket()
@@ -40,14 +42,14 @@ class Manager(object):
         self.manager_adr = '192.168.0.201'
 
     def connect_check(self):
-        # d = {'type': 'server', 'check': '1'}
-        d = '111'
+        d = ['server', 'check']
         self.sock.send(d, self.manager_adr)
 
         while True:
             with self.sock.connect() as conn:
-                resp = conn.recv(1024).decode()
-                if resp == self.manager_key:
+                resp = conn.recv(1024)
+                pi_resp = pickle.loads(resp)
+                if pi_resp == self.manager_key:
                     return True
                 return False
 
