@@ -42,7 +42,7 @@ class Manager(object):
         self.manager_adr = '192.168.0.201'
 
     def manager_check(self):
-        d = ['server', 'check']
+        d = ['server', 'info']
         self.sock.send(d, self.manager_adr)
 
         while True:
@@ -102,3 +102,5 @@ class Server(object):
 s = Socket(9696)
 m = Manager(s)
 print(m.manager_check())
+
+
