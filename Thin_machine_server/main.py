@@ -26,13 +26,13 @@ class Socket(object):
         pi_data = pickle.dumps(data)
         s.send(pi_data)
 
-            # def check(self):
-            #     s = socket.socket()
-            #     try:
-            #         s.connect((self.conn, self.port))
-            #         return True
-            #     except Exception as e:
-            #         pass
+        # def check(self):
+        #     s = socket.socket()
+        #     try:
+        #         s.connect((self.conn, self.port))
+        #         return True
+        #     except Exception as e:
+        #         pass
 
 
 class Manager(object):
@@ -41,7 +41,7 @@ class Manager(object):
         self.sock = s
         self.manager_adr = '192.168.0.201'
 
-    def connect_check(self):
+    def manager_check(self):
         d = ['server', 'check']
         self.sock.send(d, self.manager_adr)
 
@@ -66,11 +66,13 @@ class Manager(object):
 
 # Действие на тонком клиенте
 class Server(object):
-    def __init__(self, name, ip, port):
-        self.name = name
-        self.ip = ip
+    def __init__(self, port):
+        self.name = socket.gethostname()
+        self.ip = None
         self.port = port
         self.action_key = 123
+
+
 
     @staticmethod
     def action_block():
@@ -95,14 +97,8 @@ class Server(object):
         if action:
             return action()
 
-    def start(self):
-        """Запуск сервера"""
-        while True:
-            conn = Socket(self.port)
-            d = conn.get_data()
-            Server.do(d)
 
 #
 s = Socket(9696)
 m = Manager(s)
-print(m.connect_check())
+print(m.manager_check())

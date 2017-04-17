@@ -1,6 +1,6 @@
 import sqlite3
 
-SQL_SELECT = '''SELECT id, host_name, TC_ip, VM_ip FROM manager'''
+SQL_SELECT = '''SELECT id, host_name, tc_ip, vm_ip FROM manager'''
 
 
 def dict_factory(cursor, row):
@@ -17,8 +17,10 @@ def initialize(conn):
             CREATE TABLE IF NOT EXISTS manager (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 host_name TEXT NOT NULL DEFAULT '',
-                TC_ip TEXT NOT NULL DEFAULT '',
-                VM_ip TEXT NOT NULL DEFAULT ''
+                tc_ip TEXT NOT NULL DEFAULT '',
+                vm_ip TEXT NOT NULL DEFAULT '',
+                action_key TEXT NOT NULL DEFAULT '',
+                up INTEGER NOT NULL DEFAULT ''
             )
         ''')
 
@@ -35,11 +37,11 @@ def connect(db_name=None):
     return conn
 
 
-def add_communication(conn, netbios_tc, tc_ip):
+def add_communication(conn, name_tc, tc_ip, action_key):
     with conn:
         cursor = conn.execute('''
-            INSERT INTO manager (host_name, TC_ip) VALUES (?,?)
-        ''', (netbios_tc, tc_ip))
+            INSERT INTO manager (host_name, tc_ip, action_key) VALUES (?,?,?)
+        ''', (name_tc, tc_ip, action_key))
 
 
 def find_by_id(conn, idx):

@@ -63,9 +63,8 @@ class Server(object):
                 #     for i in Socket.destination:
                 #         Socket.send(comm, i['TC_ip'], i['VM_ip'])
 
-#
-# conn = storage.connect('base.db')
-# storage.initialize(conn)
+conn = storage.connect('base.db')
+storage.initialize(conn)
 
 s = Socket(9696)
 b = Server(s)
