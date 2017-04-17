@@ -43,7 +43,9 @@ class Server(object):
                 d = conn.recv(1024)
                 pi_data = pickle.loads(d)
                 if pi_data[0] == 'server':
-                    self.connect_check()
+                    if pi_data[1] == 'check':
+                        self.connect_check()
+
 
     def connect_check(self):
         self.sock.send('666', self.sock.addres)
