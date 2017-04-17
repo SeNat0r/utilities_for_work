@@ -5,21 +5,23 @@ import socket
 # Создание соединения
 class Socket(object):
     def __init__(self, port):
-        self.destination = ('127.0.0.1', port)
+        self.port = port
+        self.addres = None
 
     def connect(self):
         """Создание соединения"""
         s = socket.socket()
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(self.destination)
+        s.bind(('', self.port))
         s.listen(2)
         conn, adr = s.accept()
+        self.addres = adr[0]
         return conn
 
-    def send(self, data):
+    def send(self, data, adr):
         """Отправка данных"""
         s = socket.socket()
-        s.connect(self.destination)
+        s.connect((adr, self.port))
         s.send(data.encode())
 
 
@@ -33,12 +35,15 @@ class Server(object):
     def __init__(self, s):
         self.sock = s
 
-    def connect_check(self):
-        while 1:
+    def listen(self):
+        while True:
             with self.sock.connect() as conn:
-                abv = conn.recv(1024).decode()
-                if abv == '111':
-                    self.sock.send('666')
+                d = conn.recv(1024).decode()
+                if d == '111':
+                    self.connect_check()
+
+    def connect_check(self):
+        self.sock.send('666', self.sock.addres)
 
 
                 # @staticmethod
@@ -59,4 +64,4 @@ class Server(object):
 
 s = Socket(9696)
 b = Server(s)
-b.connect_check()
+b.listen()

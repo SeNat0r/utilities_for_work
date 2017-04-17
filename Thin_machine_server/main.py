@@ -6,21 +6,22 @@ from subprocess import call
 # Создание соединения
 class Socket(object):
     def __init__(self, port):
-        self.destination = ('127.0.0.1', port)
+        self.port = port
 
     def connect(self):
         """Создание соединения"""
         s = socket.socket()
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(self.destination)
+        s.bind(('', 9696))
         s.listen(2)
         conn, adr = s.accept()
+        # print('адрес:', adr)
         return conn
 
-    def send(self, data):
+    def send(self, data, adr):
         """Отправка данных"""
         s = socket.socket()
-        s.connect(self.destination)
+        s.connect((adr, self.port))
         s.send(data.encode())
 
             # def check(self):
@@ -36,11 +37,12 @@ class Manager(object):
     def __init__(self, s, key='666'):
         self.manager_key = key
         self.sock = s
+        self.manager_adr = '192.168.0.201'
 
     def connect_check(self):
         # d = {'type': 'server', 'check': '1'}
         d = '111'
-        self.sock.send(d)
+        self.sock.send(d, self.manager_adr)
 
         while True:
             with self.sock.connect() as conn:
