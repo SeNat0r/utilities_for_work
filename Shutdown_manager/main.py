@@ -46,14 +46,14 @@ class Server(object):
                     if pi_data[1] == 'check':
                         self.connect_check()
                     if pi_data[1] == 'info':
-                        print('Info!!!')
+                        self.add_comm()
 
 
     def connect_check(self):
         self.sock.send('666', self.sock.addres)
 
-    def add_comm(self, conn):
-        pass
+    def add_comm(self):
+        print('Info!!')
 
 
 

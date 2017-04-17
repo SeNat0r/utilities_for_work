@@ -54,6 +54,7 @@ class Manager(object):
                 return False
 
 
+
 # Работа с конфигом
 # class Config(object):
 #     def __init__(self, addr):
@@ -67,10 +68,14 @@ class Manager(object):
 # Действие на тонком клиенте
 class Server(object):
     def __init__(self, port):
-        self.name = socket.gethostname()
-        self.ip = None
         self.port = port
+        self.sock = Socket(self.port)
+        self.mngr = Manager(self.sock)
         self.action_key = 123
+
+    def send_info(self):
+        info = ['server', 'info', socket.gethostname(), self.action_key]
+        self.sock.send(info, self.mngr.manager_adr)
 
 
 
@@ -97,10 +102,11 @@ class Server(object):
         if action:
             return action()
 
+    def start(self):
+        s = Socket(self.port)
+        m = Manager(s)
+        if m.manager_check():
+            self.send_info()
 
-#
-s = Socket(9696)
-m = Manager(s)
-print(m.manager_check())
-
-
+s = Server(9696)
+s.start()
