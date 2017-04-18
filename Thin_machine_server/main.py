@@ -77,7 +77,14 @@ class Server(object):
         info = ['server', 'info', socket.gethostname(), self.action_key]
         self.sock.send(info, self.mngr.manager_adr)
 
-
+    def listen(self):
+        while True:
+            with self.sock.connect() as conn:
+                d = conn.recv(1024)
+                pi_data = pickle.loads(d)
+                if pi_data[0] == 'client':
+                    pass
+            sleep(1)
 
     @staticmethod
     def action_block():
