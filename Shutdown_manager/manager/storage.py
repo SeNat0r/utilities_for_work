@@ -25,6 +25,8 @@ def initialize(conn):
         ''')
 
 
+
+
 # Подключение(создание) к базе данных
 def connect(db_name=None):
     # Если название базы не указано, загружать базу в ОЗУ
@@ -39,14 +41,20 @@ def connect(db_name=None):
 
 def add_communication(conn, name_tc, tc_ip, action_key):
     with conn:
-        cursor = conn.execute('''
-            INSERT INTO manager (host_name, tc_ip, action_key) VALUES (?,?,?)
-        ''', (name_tc, tc_ip, action_key))
+        cursor = conn.execute(SQL_SELECT + ''' WHERE host_name=?''', (name_tc,))
+        if cursor.fetchone():
+            cursor = conn.execute('''
+                            UPDATE manager SET tc_ip=?, action_key=? WHERE host_name=?
+                        ''', (tc_ip, action_key, name_tc))
+        else:
+            cursor = conn.execute('''
+                INSERT INTO manager (host_name, tc_ip, action_key) VALUES (?,?,?)
+            ''', (name_tc, tc_ip, action_key))
 
 
-def find_by_id(conn, idx):
+def find_by_name(conn, host_name):
     with conn:
-        cursor = conn.execute(SQL_SELECT + ''' WHERE id=?''', (idx,))
+        cursor = conn.execute(SQL_SELECT + ''' WHERE host_name=?''', (host_name,))
         return cursor.fetchone()
 
 

@@ -1,92 +1,81 @@
-import socket
 import configparser
+import socket
+from subprocess import call
+import pickle
 
-
-# def manager_edit(addr):
-#     config = configparser.RawConfigParser()
-#     config.read('default.ini')
-#     config.set('DEFAULT', 'manager', addr)
-#     with open('default.ini', 'w') as configfile:
-#         config.write(configfile)
-#
-#
-# def tm_edit(addr):
-#     config = configparser.RawConfigParser()
-#     config.read('default.ini')
-#     config.set('DEFAULT', 'thin_client', addr)
-#     with open('default.ini', 'w') as configfile:
-#         config.write(configfile)
-#
-#
-# def config_init():
-#     config = configparser.RawConfigParser()
-#     config.read('default.ini')
-#     manager = config.get('DEFAULT', 'manager')
-#     tm = config.get('DEFAULT', 'thin_client')
-#     return manager, tm
-#
-#
-# manager, thin = config_init()
-#
-# connect(thin)
 
 # Создание соединения
-class Connection(object):
+class Socket(object):
     def __init__(self, port):
-        self.__sock = socket.socket()
         self.port = port
 
-    # Биндим интерфейс, порт
-    # Слушаем макс 2 соединения
-    # получаем и декодируем пакеты по 1024 байта
-    def do_listen(self):
-        """Прослушка сокета"""
-        self.__sock.bind(('', self.port))
-        self.__sock.listen(2)
-        conn, addr = self.__sock.accept()
-        data = conn.recv(1024).decode()
-        return data
+    def connect(self):
+        """Создание соединения"""
+        s = socket.socket()
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(('', self.port))
+        s.listen(2)
+        conn, adr = s.accept()
+        return conn
 
-    # Устанавливаем соединение (адрес, порт)
-    # Кодируем и посылаем данные
-    # Закрываем соединение
-    def send(self, data):
+    def send(self, data, adr):
         """Отправка данных"""
-        self.__sock.connect((self.destination, self.port))
-        self.__sock.send(data.encode())
-        self.__sock.close()
+        s = socket.socket()
+        s.connect((adr, self.port))
+        pi_data = pickle.dumps(data)
+        s.send(pi_data)
 
+        # def check(self):
+        #     s = socket.socket()
+        #     try:
+        #         s.connect((self.conn, self.port))
+        #         return True
+        #     except Exception as e:
+        #         pass
+
+
+class Manager(object):
+    def __init__(self, s, key='666'):
+        self.manager_key = key
+        self.sock = s
+        self.manager_adr = '192.168.0.201'
+
+    def manager_check(self):
+        d = ['client', 'check']
+        self.sock.send(d, self.manager_adr)
+
+        while True:
+            with self.sock.connect() as conn:
+                resp = conn.recv(1024)
+                pi_resp = pickle.loads(resp)
+                if pi_resp == self.manager_key:
+                    return True
+                return False
 
 # Работа с конфигом
-class Config(object):
-    # def __init__(self, addr):
-    #     self.addr = addr
-
-    @staticmethod
-    def get_config():
-        """Получение значений конфигураций из ini файла"""
-        config = configparser.RawConfigParser()
-        config.read('default.ini')
-        manager = config.get('DEFAULT', 'manager')
-        tc = config.get('DEFAULT', 'thin_client')
-        # return manager, tc
-        return tc
-
-        # def edit_config_tc(self):
-        #     config = configparser.RawConfigParser()
-        #     config.read('default.ini')
-        #     config.set('DEFAULT', 'thin_client', self.addr)
-        #     with open('default.ini', 'w') as configfile:
-        #         config.write(configfile)
+# class Config(object):
+#     # def __init__(self, addr):
+#     #     self.addr = addr
+#
+#     @staticmethod
+#     def get_config():
+#         """Получение значений конфигураций из ini файла"""
+#         config = configparser.RawConfigParser()
+#         config.read('default.ini')
+#         manager = config.get('DEFAULT', 'manager')
+#         tc = config.get('DEFAULT', 'thin_client')
+#         # return manager, tc
+#         return tc
+#
+#         # def edit_config_tc(self):
+#         #     config = configparser.RawConfigParser()
+#         #     config.read('default.ini')
+#         #     config.set('DEFAULT', 'thin_client', self.addr)
+#         #     with open('default.ini', 'w') as configfile:
+#         #         config.write(configfile)
 
 
 class Action(object):
-    @staticmethod
-    def start(port):
-        """Отправка команды на удаленный сервер"""
-        cmd = input()
-        addr = Config.get_config()
-        c = Connection(port, addr)
+    pass
 
 
-Action.start(9596)

@@ -52,9 +52,10 @@ class Server(object):
     def connect_check(self):
         self.sock.send('666', self.sock.addres)
 
-    def add_comm(self, pi_data):
+    def add_comm(self, d):
         print('Info!!')
-        storage.add_communication(self.db, pi_data[2], self.sock.addres, pi_data[3])
+        storage.add_communication(self.db, d[2], self.sock.addres, d[3])
+
 
 
 

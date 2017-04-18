@@ -16,7 +16,6 @@ class Socket(object):
         s.bind(('', self.port))
         s.listen(2)
         conn, adr = s.accept()
-        # print('адрес:', adr)
         return conn
 
     def send(self, data, adr):
