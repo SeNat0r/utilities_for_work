@@ -2,6 +2,7 @@ import configparser
 import socket
 from subprocess import call
 import pickle
+from time import sleep
 
 
 # Создание соединения
@@ -52,6 +53,17 @@ class Manager(object):
                     return True
                 return False
 
+
+class Server(object):
+    def __init__(self, port):
+        self.port = port
+        self.sock = Socket(self.port)
+        self.mngr = Manager(self.sock)
+        self.action_key = 123
+
+    # def send_info(self):
+    #     info = ['server', 'info', socket.gethostname(), self.action_key]
+    #     self.sock.send(info, self.mngr.manager_adr)
 # Работа с конфигом
 # class Config(object):
 #     # def __init__(self, addr):
@@ -75,7 +87,27 @@ class Manager(object):
 #         #         config.write(configfile)
 
 
-class Action(object):
-    pass
+class Client(object):
+    def __init__(self, sock, mngr, srvr):
+        self.sock = sock
+        self.manager = mngr
+        self.server = srvr
+
+    def listen(self):
+        while True:
+            with self.sock.connect() as conn:
+                d = conn.recv(1024)
+                pi_data = pickle.loads(d)
+                if pi_data[0] == 'manager':
+                    if pi_data[1] == 'a_key':
+                        pass
+                    elif pi_data[1] == 'server':
+                        pass
+            sleep(1)
+
+
+s = Socket(9696)
+m = Manager(s)
+print(m.manager_check())
 
 

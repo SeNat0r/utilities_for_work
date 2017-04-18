@@ -2,6 +2,7 @@ import configparser
 import socket
 from subprocess import call
 import pickle
+from time import sleep
 
 
 # Создание соединения

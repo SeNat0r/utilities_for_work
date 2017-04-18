@@ -1,6 +1,7 @@
 from manager import storage
 import socket
 import pickle
+from time import sleep
 
 
 # Создание соединения
@@ -48,6 +49,10 @@ class Server(object):
                         self.connect_check()
                     if pi_data[1] == 'info':
                         self.add_comm(pi_data)
+                elif pi_data[0] == 'client':
+                    if pi_data[1] == 'check':
+                        self.connect_check()
+            sleep(1)
 
     def connect_check(self):
         self.sock.send('666', self.sock.addres)
