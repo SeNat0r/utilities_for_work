@@ -34,8 +34,9 @@ class Manager(object):
 
 
 class Server(object):
-    def __init__(self, s):
+    def __init__(self, s, db):
         self.sock = s
+        self.db = db
 
     def listen(self):
         while True:
@@ -46,32 +47,34 @@ class Server(object):
                     if pi_data[1] == 'check':
                         self.connect_check()
                     if pi_data[1] == 'info':
-                        self.add_comm()
-
+                        self.add_comm(pi_data)
 
     def connect_check(self):
         self.sock.send('666', self.sock.addres)
 
-    def add_comm(self):
+    def add_comm(self, pi_data):
         print('Info!!')
+        storage.add_communication(self.db, pi_data[2], self.sock.addres, pi_data[3])
 
 
 
-                # @staticmethod
-                # def get_tc(conn):
-                #     for idx in storage.all_idx(conn):
-                #         Socket.destination.append(idx)
-                #         # Connection.send(idx['TC_ip'])
-                #
-                # # Отправка значений конфига виртуальной машине
-                # @staticmethod
-                # def send_tc_ip(comm):
-                #     for i in Socket.destination:
-                #         Socket.send(comm, i['TC_ip'], i['VM_ip'])
+
+        # @staticmethod
+        # def get_tc(conn):
+        #     for idx in storage.all_idx(conn):
+        #         Socket.destination.append(idx)
+        #         # Connection.send(idx['TC_ip'])
+        #
+        # # Отправка значений конфига виртуальной машине
+        # @staticmethod
+        # def send_tc_ip(comm):
+        #     for i in Socket.destination:
+        #         Socket.send(comm, i['TC_ip'], i['VM_ip'])
+
 
 conn = storage.connect('base.db')
 storage.initialize(conn)
 
 s = Socket(9696)
-b = Server(s)
+b = Server(s, conn)
 b.listen()
