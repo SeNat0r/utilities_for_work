@@ -52,7 +52,7 @@ class Server(object):
                 elif pi_data[0] == 'client':
                     if pi_data[1] == 'check':
                         self.connect_check()
-            sleep(1)
+            sleep(0.5)
 
     def connect_check(self):
         self.sock.send('666', self.sock.addres)

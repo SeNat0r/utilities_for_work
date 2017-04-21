@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QLabel, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem,
-    QHBoxLayout, QGroupBox, QAbstractItemView, QFormLayout
+    QHBoxLayout, QAbstractItemView, QFormLayout
 )
 
 from manager import storage

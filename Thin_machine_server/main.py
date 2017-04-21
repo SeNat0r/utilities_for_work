@@ -39,7 +39,7 @@ class Manager(object):
     def __init__(self, s, key='666'):
         self.manager_key = key
         self.sock = s
-        self.manager_adr = '192.168.0.201'
+        self.manager_adr = '127.0.0.1'
 
     def manager_check(self):
         d = ['server', 'check']
@@ -84,7 +84,7 @@ class Server(object):
                 pi_data = pickle.loads(d)
                 if pi_data[0] == 'client':
                     pass
-            sleep(1)
+            sleep(0.5)
 
     @staticmethod
     def action_block():
