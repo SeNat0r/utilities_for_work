@@ -20,6 +20,7 @@ def initialize(conn):
                 tc_ip TEXT NOT NULL DEFAULT '',
                 vm_ip TEXT NOT NULL DEFAULT '',
                 action_key TEXT NOT NULL DEFAULT '',
+                vm_name TEXT NOT NULL DEFAULT '',
                 up INTEGER NOT NULL DEFAULT ''
             )
         ''')
@@ -58,7 +59,7 @@ def find_by_name(conn, host_name):
         return cursor.fetchone()
 
 
-def all_idx(conn):
+def all_data(conn):
     with conn:
         cursor = conn.execute(SQL_SELECT)
         return cursor.fetchall()
