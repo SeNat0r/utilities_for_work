@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QLabel, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem,
-    QHBoxLayout, QAbstractItemView, QFormLayout
+    QHBoxLayout, QAbstractItemView, QFormLayout, QTableView
 )
 
 from manager import storage
@@ -24,7 +24,6 @@ class Manager(QMainWindow):
         self.refreshBtn = QPushButton('Обновить', self)
         self.editVM = QPushButton('Изменить ВМ', self)
         self.shutdownVM = QPushButton('Выключить ВМ', self)
-        self.info = QLabel('Инфо', self)
         self.infoLabel1 = QLabel('Имя машины:', self)
         self.infoLabel2 = QLabel('ВМ:', self)
         self.infoData1 = QLabel('10-1-001', self)
@@ -59,6 +58,8 @@ class Manager(QMainWindow):
 
     def createTable(self):
         self.tableWidget = QTableWidget()
+        self.tableWidget.setSelectionBehavior(QTableView.SelectRows)
+        self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setHorizontalHeaderLabels(["Токий клиент", "ВМ", "В сети"])
         self.tableWidget.resizeColumnsToContents()
