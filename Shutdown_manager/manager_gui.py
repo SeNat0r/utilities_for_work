@@ -1,4 +1,6 @@
 import sys
+import socket
+import pickle
 
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QLabel, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem,
@@ -7,6 +9,28 @@ from PyQt5.QtWidgets import (
 
 from manager import storage
 
+
+class Socket(object):
+    def __init__(self, port):
+        self.port = port
+        self.addres = None
+
+    def connect(self):
+        """Создание соединения"""
+        s = socket.socket()
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(('', self.port))
+        s.listen(2)
+        conn, adr = s.accept()
+        self.addres = adr[0]
+        return conn
+
+    def send(self, data, adr):
+        """Отправка данных"""
+        s = socket.socket()
+        s.connect((adr, self.port))
+        pi_data = pickle.dumps(data)
+        s.send(pi_data)
 
 class Manager(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -19,7 +43,7 @@ class Manager(QMainWindow):
     def initUi(self):
         self.setWindowTitle('Shutdown manager')
         self.createTable()
-        self.tableData()
+        self.buildTable()
         self.infoUI()
 
         self.refreshBtn = QPushButton('Обновить', self)
@@ -79,10 +103,22 @@ class Manager(QMainWindow):
         self.tableWidget.resizeColumnsToContents()
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-    def tableData(self):
-        self.conn = storage.connect('base.db')
-        storage.initialize(self.conn)
-        all_data = storage.all_data(self.conn)
+    def buildTable(self):
+        test = 1
+        self.dbaddr = '127.0.0.1'
+        if test:
+            self.conn = storage.connect('base.db')
+            storage.initialize(self.conn)
+            all_data = storage.all_data(self.conn)
+        else:
+            self.sock = Socket(9696)
+            d = ['ui', 'all_base']
+            self.sock.send(d, self.dbaddr)
+            while True:
+                with self.sock.connect() as conn:
+                    resp = conn.recv(1024)
+                    pi_resp = pickle.loads(resp)
+
         rowcount = 0
         for data in all_data:
             rowcount += 1
