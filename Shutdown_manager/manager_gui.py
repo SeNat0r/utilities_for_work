@@ -26,8 +26,9 @@ class Manager(QMainWindow):
         self.shutdownVM = QPushButton('Выключить ВМ', self)
         self.infoLabel1 = QLabel('Имя машины:', self)
         self.infoLabel2 = QLabel('ВМ:', self)
-        self.infoData1 = QLabel('10-1-001', self)
+        self.infoData1 = QLabel('10-003', self)
         self.infoData2 = QLabel('ThinVm001', self)
+
 
     def initLayouts(self):
         w = QWidget(self)
@@ -66,23 +67,33 @@ class Manager(QMainWindow):
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def tableData(self):
-        conn = storage.connect('base.db')
-        storage.initialize(conn)
-        all_data = storage.all_data(conn)
+        self.conn = storage.connect('base.db')
+        storage.initialize(self.conn)
+        all_data = storage.all_data(self.conn)
         rowcount = 0
         for data in all_data:
             rowcount += 1
             self.tableWidget.setRowCount(rowcount)
             self.tableWidget.setItem(rowcount - 1, 0, QTableWidgetItem(data['host_name']))
 
+    def getRow(self, a, b):
+        a = self.tableWidget.currentRow()
+        self.dataToInfo(a)
+
+
+    def dataToInfo(self, a):
+        b = self.tableWidget.item(a,0)
+        d = storage.find_by_name(self.conn, b.text())
+        self.infoData1.setText(d['host_name'])
+
+
     def initSignals(self):
-        pass
+        self.tableWidget.cellClicked.connect(self.getRow)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     sm = Manager()
-    # sm.projectView.show()
     sm.show()
 
     sys.exit(app.exec_())
