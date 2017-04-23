@@ -1,6 +1,6 @@
 import sqlite3
 
-SQL_SELECT = '''SELECT id, host_name, tc_ip, vm_ip FROM manager'''
+SQL_SELECT = '''SELECT id, host_name, tc_ip, vm_ip, vm_name FROM manager'''
 
 
 def dict_factory(cursor, row):

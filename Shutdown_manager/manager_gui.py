@@ -20,14 +20,22 @@ class Manager(QMainWindow):
         self.setWindowTitle('Shutdown manager')
         self.createTable()
         self.tableData()
+        self.infoUI()
 
         self.refreshBtn = QPushButton('Обновить', self)
         self.editVM = QPushButton('Изменить ВМ', self)
         self.shutdownVM = QPushButton('Выключить ВМ', self)
-        self.infoLabel1 = QLabel('Имя машины:', self)
-        self.infoLabel2 = QLabel('ВМ:', self)
-        self.infoData1 = QLabel('10-003', self)
-        self.infoData2 = QLabel('ThinVm001', self)
+
+
+    def infoUI(self):
+        self.infoLabelTCName = QLabel('Имя машины:', self)
+        self.infoLabelIP = QLabel('IP', self)
+        self.infoLabelVM = QLabel('Виртуальная машина:', self)
+        self.infoLabelVMIP = QLabel('ВМ IP:', self)
+        self.infoTCName = QLabel('Не выбрано', self)
+        self.infoIP = QLabel('Не выбрано', self)
+        self.infoVM = QLabel('Не выбрано', self)
+        self.infoVMIP = QLabel('Не выбрано', self)
 
 
     def initLayouts(self):
@@ -50,8 +58,10 @@ class Manager(QMainWindow):
         self.rightLayout.addWidget(self.editVM)
         self.rightLayout.addWidget(self.shutdownVM)
 
-        self.infoLayout.addRow(self.infoLabel1, self.infoData1)
-        self.infoLayout.addRow(self.infoLabel2, self.infoData2)
+        self.infoLayout.addRow(self.infoLabelTCName, self.infoTCName)
+        self.infoLayout.addRow(self.infoLabelIP, self.infoIP)
+        self.infoLayout.addRow(self.infoLabelVM, self.infoVM)
+        self.infoLayout.addRow(self.infoLabelVMIP, self.infoVMIP)
 
         self.setLayout(self.mainLayout)
 
@@ -76,16 +86,17 @@ class Manager(QMainWindow):
             self.tableWidget.setRowCount(rowcount)
             self.tableWidget.setItem(rowcount - 1, 0, QTableWidgetItem(data['host_name']))
 
-    def getRow(self, a, b):
-        a = self.tableWidget.currentRow()
-        self.dataToInfo(a)
-
+    def getRow(self, row, b):
+        row = self.tableWidget.currentRow()
+        self.dataToInfo(row)
 
     def dataToInfo(self, a):
-        b = self.tableWidget.item(a,0)
+        b = self.tableWidget.item(a, 0)
         d = storage.find_by_name(self.conn, b.text())
-        self.infoData1.setText(d['host_name'])
-
+        self.infoTCName.setText(d['host_name'])
+        self.infoIP.setText(d['tc_ip'])
+        self.infoVM.setText(d['vm_name'])
+        self.infoVMIP.setText(d['vm_ip'])
 
     def initSignals(self):
         self.tableWidget.cellClicked.connect(self.getRow)
