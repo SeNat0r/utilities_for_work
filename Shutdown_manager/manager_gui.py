@@ -37,6 +37,8 @@ class Manager(QMainWindow):
         self.infoVM = QLabel('Не выбрано', self)
         self.infoVMIP = QLabel('Не выбрано', self)
 
+        self.infoTCName.setMinimumSize(90, 5)
+
 
     def initLayouts(self):
         w = QWidget(self)
@@ -45,6 +47,7 @@ class Manager(QMainWindow):
         self.rightLayout = QVBoxLayout(w)
         self.leftLayout = QVBoxLayout(w)
         self.infoLayout = QFormLayout(w)
+
 
         self.mainLayout.addLayout(self.leftLayout)
         self.mainLayout.addLayout(self.rightLayout)
