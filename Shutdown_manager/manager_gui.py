@@ -100,7 +100,6 @@ class Manager(QMainWindow):
         self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setHorizontalHeaderLabels(["Токий клиент", "ВМ", "В сети"])
-        self.tableWidget.resizeColumnsToContents()
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def buildTable(self):
@@ -123,6 +122,8 @@ class Manager(QMainWindow):
             rowcount += 1
             self.tableWidget.setRowCount(rowcount)
             self.tableWidget.setItem(rowcount - 1, 0, QTableWidgetItem(data['host_name']))
+            self.tableWidget.setItem(rowcount - 1, 1, QTableWidgetItem(data['vm_name']))
+            self.tableWidget.resizeColumnsToContents()
 
     def getRow(self, row, b):
         row = self.tableWidget.currentRow()
@@ -150,6 +151,7 @@ class Manager(QMainWindow):
         vm, ok = QInputDialog.getItem(self, 'Выбор ВМ', 'Выберите виртуальную машину', self.vms, 0, False)
         if ok:
             self.editVMBinding(vm)
+            self.buildTable()
 
     def editVMBinding(self, vm):
         d = ['gui', 'edit_vm', self.infoTCName.text(), vm]
