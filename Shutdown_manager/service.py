@@ -63,6 +63,9 @@ class Server(object):
                         self.bind_vm(pi_data[2], pi_data[3])
                     elif pi_data[1] == 'get_vms':
                         self.get_vms()
+                    elif pi_data[1] == 'shtdwn':
+                        self.vm_shtdwn(pi_data[2])
+
             sleep(0.3)
 
     def connect_check(self):
@@ -91,6 +94,10 @@ class Server(object):
 
     def add_vm(self, d):
         storage.add_vm(self.db, d[2], self.sock.addres)
+
+    def vm_shtdwn(self, vm_ip):
+        d = ['manager', 'shtdwn']
+        self.sock.send(d, vm_ip)
 
 
 

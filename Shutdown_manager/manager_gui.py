@@ -153,7 +153,8 @@ class Manager(QMainWindow):
             self.buildTable()
 
     def shutdown(self):
-
+        d = ['gui', 'shtdwn', self.infoVMIP]
+        self.sock.send(d, self.dbaddr)
 
     def editVMBinding(self, vm):
         d = ['gui', 'edit_vm', self.infoTCName.text(), vm]
