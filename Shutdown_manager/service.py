@@ -61,8 +61,6 @@ class Server(object):
                         self.bind_vm(pi_data[2], pi_data[3])
                     elif pi_data[1] == 'get_vms':
                         self.get_vms()
-
-
             sleep(0.3)
 
     def connect_check(self):
