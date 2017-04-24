@@ -82,7 +82,8 @@ class Server(object):
                 pi_data = pickle.loads(d)
                 if pi_data[0] == 'client' and pi_data[1] == self.action_key:
                         if pi_data[3] == 'shtdwn':
-                            self.action_off()
+                            # self.action_off()
+                            print('Типо все работает')
             sleep(0.5)
 
     @staticmethod
