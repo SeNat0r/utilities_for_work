@@ -61,9 +61,7 @@ class Manager(object):
 #         self.mngr = Manager(self.sock)
 #         self.action_key = 123
 
-    # def send_info(self):
-    #     info = ['server', 'info', socket.gethostname(), self.action_key]
-    #     self.sock.send(info, self.mngr.manager_adr)
+
 # Работа с конфигом
 # class Config(object):
 #     # def __init__(self, addr):
@@ -92,7 +90,8 @@ class Client(object):
         self.port = port
         self.sock = Socket(self.port)
         self.mngr = Manager(self.sock)
-        self.server = None
+        self.server = '127.0.0.1'
+        self.action_key = 123
 
     def send_info(self):
         info = ['client', 'info', socket.gethostname()]
@@ -105,8 +104,14 @@ class Client(object):
                 pi_data = pickle.loads(d)
                 if pi_data[0] == 'manager':
                     if pi_data[1] == 'upd_srv':
-                        print(pi_data)
+                        self.server = pi_data[2]
+                    elif pi_data[1] == 'shtdwn':
+                        self.shutdown_server()
             sleep(0.5)
+
+    def shutdown_server(self):
+        d = ['client', self.action_key, 'shtdwn']
+        self.sock.send(d, self.server)
 
     def start(self):
         if self.mngr.manager_check():

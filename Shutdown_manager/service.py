@@ -82,7 +82,7 @@ class Server(object):
     def bind_vm(self, thinclient, vm):
         storage.update_binding(self.db, thinclient, vm)
         temp = storage.find_by_name(self.db, thinclient)
-        d = ['client', 'upd_srv', temp['tc_ip'], temp['action_key']]
+        d = ['manager', 'upd_srv', temp['tc_ip'], temp['action_key']]
         self.sock.send(d, temp['vm_ip'])
 
     def get_vms(self):

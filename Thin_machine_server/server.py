@@ -80,8 +80,9 @@ class Server(object):
             with self.sock.connect() as conn:
                 d = conn.recv(1024)
                 pi_data = pickle.loads(d)
-                if pi_data[0] == 'client':
-                    pass
+                if pi_data[0] == 'client' and pi_data[1] == self.action_key:
+                        if pi_data[3] == 'shtdwn':
+                            self.action_off()
             sleep(0.5)
 
     @staticmethod
@@ -108,11 +109,9 @@ class Server(object):
             return action()
 
     def start(self):
-        s = Socket(self.port)
-        m = Manager(s)
-        if m.manager_check():
+        if self.mngr.manager_check():
             self.send_info()
-
+        self.listen()
 
 s = Server(9696)
 s.start()
