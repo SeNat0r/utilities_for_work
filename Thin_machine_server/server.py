@@ -54,7 +54,6 @@ class Manager(object):
                 return False
 
 
-
 # Работа с конфигом
 # class Config(object):
 #     def __init__(self, addr):
@@ -63,7 +62,6 @@ class Manager(object):
 #
 #     def init_config(self):
 #         pass
-
 
 # Действие на тонком клиенте
 class Server(object):
@@ -114,6 +112,7 @@ class Server(object):
         m = Manager(s)
         if m.manager_check():
             self.send_info()
+
 
 s = Server(9696)
 s.start()

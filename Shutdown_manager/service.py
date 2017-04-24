@@ -52,6 +52,8 @@ class Server(object):
                 elif pi_data[0] == 'client':
                     if pi_data[1] == 'check':
                         self.connect_check()
+                    elif pi_data[1] == 'info':
+                        self.add_vm(pi_data)
                 elif pi_data[0] == 'gui':
                     if pi_data[1] == 'all_base':
                         self.return_db()
@@ -83,6 +85,10 @@ class Server(object):
     def get_vms(self):
         vms = storage.all_vms(self.db)
         self.sock.send(vms, self.sock.addres)
+
+    def add_vm(self, d):
+        storage.add_vm(self.db, d[2], self.sock.addres)
+
 
 
 

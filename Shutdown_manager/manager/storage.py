@@ -63,6 +63,18 @@ def add_communication(conn, name_tc, tc_ip, action_key):
             ''', (name_tc, tc_ip, action_key))
 
 
+def add_vm(conn, vm_name, ip):
+    with conn:
+        cursor = conn.execute(SQL_SELECT_VMS + ''' WHERE vm_name=?''', (vm_name,))
+        if cursor.fetchone():
+            cursor = conn.execute('''
+                            UPDATE vms SET ip=? WHERE vm_name=?
+                        ''', (ip, vm_name))
+        else:
+            cursor = conn.execute('''
+                INSERT INTO vms (vm_name, ip) VALUES (?,?)
+            ''', (vm_name, ip))
+
 def find_by_name(conn, host_name):
     with conn:
         cursor = conn.execute(SQL_SELECT + ''' WHERE host_name=?''', (host_name,))

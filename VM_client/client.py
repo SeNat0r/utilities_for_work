@@ -54,12 +54,12 @@ class Manager(object):
                 return False
 
 
-class Server(object):
-    def __init__(self, port):
-        self.port = port
-        self.sock = Socket(self.port)
-        self.mngr = Manager(self.sock)
-        self.action_key = 123
+# class Server(object):
+#     def __init__(self, port):
+#         self.port = port
+#         self.sock = Socket(self.port)
+#         self.mngr = Manager(self.sock)
+#         self.action_key = 123
 
     # def send_info(self):
     #     info = ['server', 'info', socket.gethostname(), self.action_key]
@@ -88,10 +88,15 @@ class Server(object):
 
 
 class Client(object):
-    def __init__(self, sock, mngr, srvr):
-        self.sock = sock
-        self.manager = mngr
-        self.server = srvr
+    def __init__(self, port):
+        self.port = port
+        self.sock = Socket(self.port)
+        self.mngr = Manager(self.sock)
+        self.server = None
+
+    def send_info(self):
+        info = ['client', 'info', socket.gethostname()]
+        self.sock.send(info, self.mngr.manager_adr)
 
     def listen(self):
         while True:
@@ -103,11 +108,12 @@ class Client(object):
                         pass
                     elif pi_data[1] == 'server':
                         pass
-            sleep(1)
+            sleep(0.5)
 
+    def start(self):
+        print(self.mngr.manager_check())
+        if self.mngr.manager_check():
+            self.send_info()
 
-s = Socket(9696)
-m = Manager(s)
-print(m.manager_check())
-
-
+c = Client(9696)
+c.start()
