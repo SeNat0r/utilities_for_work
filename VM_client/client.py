@@ -104,16 +104,14 @@ class Client(object):
                 d = conn.recv(1024)
                 pi_data = pickle.loads(d)
                 if pi_data[0] == 'manager':
-                    if pi_data[1] == 'a_key':
-                        pass
-                    elif pi_data[1] == 'server':
-                        pass
+                    if pi_data[1] == 'upd_srv':
+                        print(pi_data)
             sleep(0.5)
 
     def start(self):
-        print(self.mngr.manager_check())
         if self.mngr.manager_check():
             self.send_info()
+        self.listen()
 
 c = Client(9696)
 c.start()

@@ -147,7 +147,6 @@ class Manager(QMainWindow):
         with self.sock.connect() as conn:
             resp = conn.recv(1024)
             self.vms = pickle.loads(resp)
-        # self.vms = ['VM0002', 'bbb']
         vm, ok = QInputDialog.getItem(self, 'Выбор ВМ', 'Выберите виртуальную машину', self.vms, 0, False)
         if ok:
             self.editVMBinding(vm)
