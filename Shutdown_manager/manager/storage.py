@@ -1,6 +1,7 @@
 import sqlite3
 
 SQL_SELECT = '''SELECT id, host_name, tc_ip, vm_ip, vm_name FROM manager'''
+SQL_SELECT_VMS = '''SELECT id, vm_name, ip FROM vms'''
 
 
 def dict_factory(cursor, row):
@@ -26,6 +27,15 @@ def initialize(conn):
         ''')
 
 
+def init_vms_db(conn):
+    with conn:
+        cursor = conn.executescript('''
+            CREATE TABLE IF NOT EXISTS vms (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                vm_name TEXT NOT NULL DEFAULT '',
+                ip TEXT NOT NULL DEFAULT ''
+            )
+        ''')
 
 
 # Подключение(создание) к базе данных
@@ -59,7 +69,31 @@ def find_by_name(conn, host_name):
         return cursor.fetchone()
 
 
+def find_by_vmname(conn, vm_name):
+    with conn:
+        cursor = conn.execute(SQL_SELECT_VMS + ''' WHERE vm_name=?''', (vm_name,))
+        return cursor.fetchone()
+
 def all_data(conn):
     with conn:
         cursor = conn.execute(SQL_SELECT)
         return cursor.fetchall()
+
+
+def all_vms(conn):
+    with conn:
+        cursor = conn.execute(SQL_SELECT_VMS)
+        temp = cursor.fetchall()
+        vms = []
+        for d in temp:
+            vms.append(d['vm_name'])
+        return vms
+
+
+
+def update_binding(conn, name_tc, vm_name):
+    vm_ip = find_by_vmname(conn, vm_name)
+    with conn:
+        cursor = conn.execute('''
+            UPDATE manager SET vm_name=?, vm_ip=? WHERE host_name=?
+        ''', (vm_name, vm_ip['ip'], name_tc))

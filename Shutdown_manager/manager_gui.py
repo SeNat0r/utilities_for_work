@@ -4,7 +4,7 @@ import pickle
 
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QLabel, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem,
-    QHBoxLayout, QAbstractItemView, QFormLayout, QTableView
+    QHBoxLayout, QAbstractItemView, QFormLayout, QTableView, QComboBox, QInputDialog
 )
 
 from manager import storage
@@ -56,10 +56,10 @@ class Manager(QMainWindow):
         self.infoLabelIP = QLabel('IP', self)
         self.infoLabelVM = QLabel('Виртуальная машина:', self)
         self.infoLabelVMIP = QLabel('ВМ IP:', self)
-        self.infoTCName = QLabel('Не выбрано', self)
-        self.infoIP = QLabel('Не выбрано', self)
-        self.infoVM = QLabel('Не выбрано', self)
-        self.infoVMIP = QLabel('Не выбрано', self)
+        self.infoTCName = QLabel('', self)
+        self.infoIP = QLabel('', self)
+        self.infoVM = QLabel('', self)
+        self.infoVMIP = QLabel('', self)
 
         self.infoTCName.setMinimumSize(90, 5)
 
@@ -104,7 +104,7 @@ class Manager(QMainWindow):
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def buildTable(self):
-        test = 1
+        test = 0
         self.dbaddr = '127.0.0.1'
         if test:
             self.conn = storage.connect('base.db')
@@ -112,12 +112,11 @@ class Manager(QMainWindow):
             all_data = storage.all_data(self.conn)
         else:
             self.sock = Socket(9696)
-            d = ['ui', 'all_base']
+            d = ['gui', 'all_base']
             self.sock.send(d, self.dbaddr)
-            while True:
-                with self.sock.connect() as conn:
-                    resp = conn.recv(1024)
-                    pi_resp = pickle.loads(resp)
+            with self.sock.connect() as conn:
+                resp = conn.recv(1024)
+                all_data = pickle.loads(resp)
 
         rowcount = 0
         for data in all_data:
@@ -129,16 +128,36 @@ class Manager(QMainWindow):
         row = self.tableWidget.currentRow()
         self.dataToInfo(row)
 
-    def dataToInfo(self, a):
-        b = self.tableWidget.item(a, 0)
-        d = storage.find_by_name(self.conn, b.text())
-        self.infoTCName.setText(d['host_name'])
-        self.infoIP.setText(d['tc_ip'])
-        self.infoVM.setText(d['vm_name'])
-        self.infoVMIP.setText(d['vm_ip'])
+    def dataToInfo(self, row):
+        selected = self.tableWidget.item(row, 0)
+        d = ['gui', 'req_info', selected.text()]
+        self.sock.send(d, self.dbaddr)
+        with self.sock.connect() as conn:
+            resp = conn.recv(1024)
+            info = pickle.loads(resp)
+        self.infoTCName.setText(info['host_name'])
+        self.infoIP.setText(info['tc_ip'])
+        self.infoVM.setText(info['vm_name'])
+        self.infoVMIP.setText(info['vm_ip'])
+
+    def showDialog(self):
+        d = ['gui', 'get_vms']
+        self.sock.send(d, self.dbaddr)
+        with self.sock.connect() as conn:
+            resp = conn.recv(1024)
+            self.vms = pickle.loads(resp)
+        # self.vms = ['VM0002', 'bbb']
+        vm, ok = QInputDialog.getItem(self, 'Выбор ВМ', 'Выберите виртуальную машину', self.vms, 0, False)
+        if ok:
+            self.editVMBinding(vm)
+
+    def editVMBinding(self, vm):
+        d = ['gui', 'edit_vm', self.infoTCName.text(), vm]
+        self.sock.send(d, self.dbaddr)
 
     def initSignals(self):
         self.tableWidget.cellClicked.connect(self.getRow)
+        self.editVM.clicked.connect(self.showDialog)
 
 
 if __name__ == '__main__':
