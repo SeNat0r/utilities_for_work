@@ -19,11 +19,13 @@ class pdf_generator(QMainWindow):
         self.initLayouts()
 
     def initUi(self):
+        self.setWindowTitle('Генератор бланков')
         self.resize(400, 300)
 
         self.__lastName = QLabel('Фамилия', self)
         self.__firstName = QLabel('Имя', self)
         self.__citizenship = QLabel('Гражданство', self)
+        self.__birthday = QLabel('Дата рождения\nЗаполнять в формате:\nДД-ММ-ГГГГ', self)
 
         self.__lastNameEdit = QLineEdit(self, maxLength=35)
         self.__firstNameEdit = QLineEdit(self, maxLength=35)
@@ -31,6 +33,9 @@ class pdf_generator(QMainWindow):
         self.__citizenshipSelect = QComboBox(self)
         citizenships = ['Беларусь']
         self.__citizenshipSelect.addItems(citizenships)
+
+        self.__birthdayEdit = QLineEdit(self, maxLength=10)
+
 
         self.__generate = QPushButton('Генерировать', self)
 
@@ -44,6 +49,7 @@ class pdf_generator(QMainWindow):
         self.inputLayout.addRow(self.__lastName, self.__lastNameEdit)
         self.inputLayout.addRow(self.__firstName, self.__firstNameEdit)
         self.inputLayout.addRow(self.__citizenship, self.__citizenshipSelect)
+        self.inputLayout.addRow(self.__birthday, self.__birthdayEdit)
         self.mainLayout.addWidget(self.__generate)
 
         self.setCentralWidget(w)
@@ -57,6 +63,7 @@ class pdf_generator(QMainWindow):
         last_name = self.__lastNameEdit.text().upper()
         first_name = self.__firstNameEdit.text().upper()
         citizenship = self.__citizenshipSelect.currentText().upper()
+        birthday = self.__birthdayEdit.text()
 
         x = 85.5
         y = 697
@@ -77,6 +84,26 @@ class pdf_generator(QMainWindow):
         x = 98.8
         y = 656
         for s in citizenship:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+
+        x = 113.1
+        y = 635
+        for s in birthday[:2]:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+        x = 166
+        for s in birthday[3:5]:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+        x = 206
+        for s in birthday[6:]:
             text = c.beginText(x, y)
             text.textLine(s)
             c.drawText(text)
