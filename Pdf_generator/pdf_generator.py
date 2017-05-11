@@ -6,7 +6,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import A4
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton,
-    QComboBox
+    QComboBox, QSpacerItem, QSizePolicy
 )
 
 
@@ -22,10 +22,10 @@ class pdf_generator(QMainWindow):
         self.setWindowTitle('Генератор бланков')
         self.resize(400, 300)
 
-        self.__lastName = QLabel('Фамилия', self)
-        self.__firstName = QLabel('Имя', self)
-        self.__citizenship = QLabel('Гражданство', self)
-        self.__birthday = QLabel('Дата рождения\nЗаполнять в формате:\nДД-ММ-ГГГГ', self)
+        self.__lastName = QLabel('Фамилия:', self)
+        self.__firstName = QLabel('Имя:', self)
+        self.__citizenship = QLabel('Гражданство:', self)
+        self.__birthday = QLabel('Дата рождения: (Заполнять в формате: ДДММГГГГ)', self)
 
         self.__lastNameEdit = QLineEdit(self, maxLength=35)
         self.__firstNameEdit = QLineEdit(self, maxLength=35)
@@ -34,7 +34,7 @@ class pdf_generator(QMainWindow):
         citizenships = ['Беларусь']
         self.__citizenshipSelect.addItems(citizenships)
 
-        self.__birthdayEdit = QLineEdit(self, maxLength=10)
+        self.__birthdayEdit = QLineEdit(self, maxLength=8)
 
 
         self.__generate = QPushButton('Генерировать', self)
@@ -42,14 +42,21 @@ class pdf_generator(QMainWindow):
     def initLayouts(self):
         w = QWidget(self)
 
+        self.spacer_1 = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.spacer_2 = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
         self.mainLayout = QVBoxLayout(w)
         self.inputLayout = QFormLayout(w)
 
+        self.mainLayout.addWidget(self.__lastName)
+        self.mainLayout.addWidget(self.__lastNameEdit)
+        self.mainLayout.addWidget(self.__firstName)
+        self.mainLayout.addWidget(self.__firstNameEdit)
         self.mainLayout.addLayout(self.inputLayout)
-        self.inputLayout.addRow(self.__lastName, self.__lastNameEdit)
-        self.inputLayout.addRow(self.__firstName, self.__firstNameEdit)
         self.inputLayout.addRow(self.__citizenship, self.__citizenshipSelect)
-        self.inputLayout.addRow(self.__birthday, self.__birthdayEdit)
+        self.mainLayout.addWidget(self.__birthday)
+        self.mainLayout.addWidget(self.__birthdayEdit)
+        self.mainLayout.addItem(self.spacer_2)
         self.mainLayout.addWidget(self.__generate)
 
         self.setCentralWidget(w)
@@ -97,13 +104,13 @@ class pdf_generator(QMainWindow):
             c.drawText(text)
             x += 13.3
         x = 166
-        for s in birthday[3:5]:
+        for s in birthday[2:4]:
             text = c.beginText(x, y)
             text.textLine(s)
             c.drawText(text)
             x += 13.3
         x = 206
-        for s in birthday[6:]:
+        for s in birthday[4:]:
             text = c.beginText(x, y)
             text.textLine(s)
             c.drawText(text)
