@@ -1,4 +1,4 @@
-import sys
+import sys, os.path
 
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
@@ -38,13 +38,12 @@ class pdf_generator(QMainWindow):
         self.__passNum.setAlignment(Qt.AlignRight)
         self.__dateOfIssue = QLabel('Дата выдачи:', self)
         self.__validity = QLabel('Срок действия', self)
+        self.__permit = QLabel('Документ на право\nпребывания:', self)
+        self.__purpose = QLabel('Цель въезда:', self)
 
         self.__lastNameEdit = QLineEdit(self, maxLength=35)
         self.__firstNameEdit = QLineEdit(self, maxLength=35)
         self.__citizenshipEdit = QLineEdit(self, maxLength=34)
-        # self.__citizenshipSelect = QComboBox(self)
-        # citizenships = ['Беларусь']
-        # self.__citizenshipSelect.addItems(citizenships)
         self.__birthdayEdit = QLineEdit(self, maxLength=10)
         self.__maleRadio = QRadioButton('Мужской', self)
         self.__femaleRadio = QRadioButton('Женский', self)
@@ -55,6 +54,10 @@ class pdf_generator(QMainWindow):
         self.__passportNumEdit = QLineEdit(self, maxLength=9)
         self.__dateOfIssueEdit = QLineEdit(self, maxLength=10)
         self.__validityEdit = QLineEdit(self, maxLength=10)
+        self.__purposeBox = QComboBox(self)
+        purposes = ['служебная', 'туризм', 'деловая', 'учеба', 'работа', 'частная', 'транзит', 'гуманитарная', 'другая']
+        self.__purposeBox.addItems(purposes)
+
 
 
         self.__generate = QPushButton('Генерировать', self)
@@ -94,6 +97,8 @@ class pdf_generator(QMainWindow):
         self.mainLayout.addWidget(self.__dateOfIssueEdit, 13, 1)
         self.mainLayout.addWidget(self.__validity, 13, 2)
         self.mainLayout.addWidget(self.__validityEdit, 13, 3)
+        self.mainLayout.addWidget(self.__purpose, 14, 0)
+        self.mainLayout.addWidget(self.__purposeBox, 14, 1)
 
 
         self.mainLayout.addWidget(self.__generate, 15, 0, 1, 4)
@@ -108,7 +113,6 @@ class pdf_generator(QMainWindow):
 
         last_name = self.__lastNameEdit.text().upper()
         first_name = self.__firstNameEdit.text().upper()
-        # citizenship = self.__citizenshipSelect.currentText().upper()
         citizenship = self.__citizenshipEdit.text().upper()
         birthday = ''
         tempnum = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
@@ -131,140 +135,53 @@ class pdf_generator(QMainWindow):
             if symb in tempnum:
                 validity += symb
 
-        x = 85.5
-        y = 697
-        for s in last_name:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
+        purpose = self.__purposeBox.currentIndex()
 
-        x = 85.5
-        y = 677
-        for s in first_name:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
+        self.fill_text(c, last_name, 85.5, 697)
+        self.fill_text(c, first_name, 85.5, 677)
+        self.fill_text(c, citizenship, 98.8, 656)
 
-        x = 98.8
-        y = 656
-        for s in citizenship:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-
-        x = 113.1
-        y = 635
-        for s in birthday[:2]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-        x = 166
-        for s in birthday[2:4]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-        x = 206
-        for s in birthday[4:]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
+        self.fill_text(c, birthday[:2], 113.1, 635)
+        self.fill_text(c, birthday[2:4], 166, 635)
+        self.fill_text(c, birthday[4:], 206, 635)
 
         if self.__maleRadio.isChecked():
-            text = c.beginText(351.8, y)
-            text.textLine('V')
-            c.drawText(text)
+            self.fill_radio(c, 351.8, 635)
         else:
-            text = c.beginText(418.3, y)
-            text.textLine('V')
-            c.drawText(text)
+            self.fill_radio(c, 418.3, 635)
 
-        x = 112.5
-        y = 615
-        for s in state:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
+        self.fill_text(c, state, 112.5, 615)
+        self.fill_text(c, city, 113, 593)
+        self.fill_text(c, 'ПАСПОРТ', 192.8, 578)
+        self.fill_text(c, passportSN, 366, 578)
+        self.fill_text(c, passportN, 432.5, 578)
 
-        x = 113
-        y = 593
-        for s in city:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
+        self.fill_text(c, dateOfIssue[:2], 99.8, 551)
+        self.fill_text(c, dateOfIssue[2:4], 152.7, 551)
+        self.fill_text(c, dateOfIssue[4:], 192.7, 551)
 
-        x = 192.8
-        y = 578
-        for s in 'ПАСПОРТ':
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
+        self.fill_text(c, validity[:2], 312.5, 551)
+        self.fill_text(c, validity[2:4], 365.7, 551)
+        self.fill_text(c, validity[4:], 405.6, 551)
 
-        x = 366
-        for s in passportSN:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-        x = 432.5
-        for s in passportN:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
 
-        x = 99.8
-        y = 551
-        for s in dateOfIssue[:2]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-        x = 152.7
-        for s in dateOfIssue[2:4]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-        x = 192.7
-        for s in dateOfIssue[4:]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-
-        x = 312.5
-        for s in dateOfIssue[:2]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-        x = 365.7
-        for s in dateOfIssue[2:4]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
-        x = 405.6
-        for s in dateOfIssue[4:]:
-            text = c.beginText(x, y)
-            text.textLine(s)
-            c.drawText(text)
-            x += 13.3
 
         c.save()
 
     def initSignals(self):
         self.__generate.clicked.connect(self.generatePDF)
 
+    def fill_text(self, canvas, data,x, y):
+        for s in data:
+            text = canvas.beginText(x, y)
+            text.textLine(s)
+            canvas.drawText(text)
+            x += 13.3
+
+    def fill_radio(self, canvas, x, y):
+        text = canvas.beginText(x, y)
+        text.textLine('V')
+        canvas.drawText(text)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
