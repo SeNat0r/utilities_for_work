@@ -5,7 +5,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import A4
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QFormLayout, QGridLayout, QLabel, QLineEdit, QPushButton,
+    QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QLineEdit, QPushButton,
     QComboBox, QSpacerItem, QSizePolicy, QRadioButton, QCheckBox
 )
 
@@ -31,7 +31,10 @@ class pdf_generator(QMainWindow):
         self.__state = QLabel('Государство:', self)
         self.__city = QLabel('Город:', self)
         self.__passport = QLabel('Паспорт:', self)
-        self.__passSN = QLabel('Серия:', self)
+        self.__passSN = QLabel('Серия', self)
+        self.__passNum = QLabel('№', self)
+        self.__dateOfIssue = QLabel('Дата выдачи:', self)
+        self.__validity = QLabel('Срок действия', self)
 
         self.__lastNameEdit = QLineEdit(self, maxLength=35)
         self.__firstNameEdit = QLineEdit(self, maxLength=35)
@@ -46,6 +49,7 @@ class pdf_generator(QMainWindow):
         self.__stateEdit = QLineEdit(self, maxLength=33)
         self.__cityEdit = QLineEdit(self, maxLength=33)
         self.__passportEdit = QLineEdit(self, maxLength=4)
+        self.__passportNumEdit = QLineEdit(self, maxLength=9)
 
 
         self.__generate = QPushButton('Генерировать', self)
@@ -75,27 +79,30 @@ class pdf_generator(QMainWindow):
         self.mainLayout.addWidget(self.__citizenship, 3, 0)
         self.mainLayout.addWidget(self.__citizenshipEdit, 3, 1, 1, 5)
         self.mainLayout.addWidget(self.__birthday, 4, 0)
-        self.mainLayout.addWidget(self.__birthdayEdit, 4, 1)
+        self.mainLayout.addWidget(self.__birthdayEdit, 4, 1, 1, 2)
         # self.inputLayout.addRow(self.__birthday, self.__birthdayEdit)
         self.mainLayout.addWidget(self.__sex, 5, 0)
         # self.mainLayout.addLayout(self.inputLayout2)
         # self.inputLayout2.addRow(self.__maleRadio, self.__femaleRadio)
-        self.mainLayout.addWidget(self.__maleRadio, 5, 1)
-        self.mainLayout.addWidget(self.__femaleRadio, 6, 1)
+        self.mainLayout.addWidget(self.__maleRadio, 5, 1, 1, 3)
+        self.mainLayout.addWidget(self.__femaleRadio, 6, 1, 1, 3)
         self.mainLayout.addWidget(self.__pob, 7, 0)
-        self.mainLayout.addWidget(self.__stateCheck, 8, 1)
         # self.mainLayout.addLayout(self.inputLayout3)
         # self.inputLayout3.addRow(self.__state, self.__stateEdit)
-        self.mainLayout.addWidget(self.__state, 9, 0)
-        self.mainLayout.addWidget(self.__stateEdit, 9, 1, 1, 5)
+        self.mainLayout.addWidget(self.__state, 8, 0)
+        self.mainLayout.addWidget(self.__stateEdit, 8, 1, 1, 5)
+        self.mainLayout.addWidget(self.__stateCheck, 9, 1, 1, 5)
         # self.inputLayout3.addRow(self.__city, self.__cityEdit)
         self.mainLayout.addWidget(self.__city, 10, 0)
-        self.mainLayout.addWidget(self.__stateEdit, 10, 1, 1, 5)
+        self.mainLayout.addWidget(self.__cityEdit, 10, 1, 1, 5)
         # self.inputLayout3.addRow(self.__passport, self.__passportEdit)
         self.mainLayout.addWidget(self.__passport, 11, 0)
-        self.mainLayout.addWidget(self.__passSN, 12, 0)
-        self.mainLayout.addWidget(self.__passportEdit, 12, 1)
-        self.mainLayout.addItem(self.spacer_2)
+        self.mainLayout.addWidget(self.__passSN, 12, 1)
+        self.mainLayout.addWidget(self.__passportEdit, 12, 2)
+        self.mainLayout.addWidget(self.__passNum, 12, 3)
+        self.mainLayout.addWidget(self.__passportNumEdit, 12, 5)
+
+
         self.mainLayout.addWidget(self.__generate, 13, 0, 1, 5)
 
         self.setCentralWidget(w)
@@ -120,6 +127,8 @@ class pdf_generator(QMainWindow):
         else:
             state = self.__stateEdit.text().upper()
         city = self.__cityEdit.text().upper()
+        passportSN = self.__passportEdit.text()
+        passportN = self.__passportNumEdit.text()
 
         x = 85.5
         y = 697
@@ -185,6 +194,20 @@ class pdf_generator(QMainWindow):
         x = 113
         y = 593
         for s in city:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+
+        x = 366
+        y = 578
+        for s in passportSN:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+        x = 432.5
+        for s in passportN:
             text = c.beginText(x, y)
             text.textLine(s)
             c.drawText(text)
