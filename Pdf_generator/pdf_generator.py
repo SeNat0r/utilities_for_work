@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QLineEdit, QPushButton,
     QComboBox, QSpacerItem, QSizePolicy, QRadioButton, QCheckBox
 )
+from PyQt5.QtCore import Qt
 
 
 class pdf_generator(QMainWindow):
@@ -32,7 +33,9 @@ class pdf_generator(QMainWindow):
         self.__city = QLabel('Город:', self)
         self.__passport = QLabel('Паспорт:', self)
         self.__passSN = QLabel('Серия', self)
+        self.__passSN.setAlignment(Qt.AlignRight)
         self.__passNum = QLabel('№', self)
+        self.__passNum.setAlignment(Qt.AlignRight)
         self.__dateOfIssue = QLabel('Дата выдачи:', self)
         self.__validity = QLabel('Срок действия', self)
 
@@ -50,6 +53,8 @@ class pdf_generator(QMainWindow):
         self.__cityEdit = QLineEdit(self, maxLength=33)
         self.__passportEdit = QLineEdit(self, maxLength=4)
         self.__passportNumEdit = QLineEdit(self, maxLength=9)
+        self.__dateOfIssueEdit = QLineEdit(self, maxLength=10)
+        self.__validityEdit = QLineEdit(self, maxLength=10)
 
 
         self.__generate = QPushButton('Генерировать', self)
@@ -60,50 +65,38 @@ class pdf_generator(QMainWindow):
         self.spacer_1 = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.spacer_2 = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        # self.mainLayout = QVBoxLayout(w)
         self.mainLayout = QGridLayout(w)
-        self.mainLayout.setSpacing(10)
-        # self.inputLayout = QFormLayout(w)
-        # self.inputLayout2 = QFormLayout(w)
-        # self.inputLayout3 = QFormLayout(w)
+        self.mainLayout.setSpacing(8)
 
-        # self.mainLayout.addLayout(self.inputLayout)
         self.mainLayout.addWidget(self.__lastName, 1, 0)
-        self.mainLayout.addWidget(self.__lastNameEdit, 1, 1, 1, 5)
-        # self.inputLayout.addRow(self.__lastName, self.__lastNameEdit)
+        self.mainLayout.addWidget(self.__lastNameEdit, 1, 1, 1, 3)
         self.mainLayout.addWidget(self.__firstName, 2, 0)
-        self.mainLayout.addWidget(self.__firstNameEdit, 2, 1, 1, 5)
-        # self.inputLayout.addRow(self.__firstName, self.__firstNameEdit)
-        # self.inputLayout.addRow(self.__citizenship, self.__citizenshipSelect)
-        # self.inputLayout.addRow(self.__citizenship, self.__citizenshipEdit)
+        self.mainLayout.addWidget(self.__firstNameEdit, 2, 1, 1, 3)
         self.mainLayout.addWidget(self.__citizenship, 3, 0)
-        self.mainLayout.addWidget(self.__citizenshipEdit, 3, 1, 1, 5)
+        self.mainLayout.addWidget(self.__citizenshipEdit, 3, 1, 1, 3)
         self.mainLayout.addWidget(self.__birthday, 4, 0)
-        self.mainLayout.addWidget(self.__birthdayEdit, 4, 1, 1, 2)
-        # self.inputLayout.addRow(self.__birthday, self.__birthdayEdit)
+        self.mainLayout.addWidget(self.__birthdayEdit, 4, 1)
         self.mainLayout.addWidget(self.__sex, 5, 0)
-        # self.mainLayout.addLayout(self.inputLayout2)
-        # self.inputLayout2.addRow(self.__maleRadio, self.__femaleRadio)
         self.mainLayout.addWidget(self.__maleRadio, 5, 1, 1, 3)
         self.mainLayout.addWidget(self.__femaleRadio, 6, 1, 1, 3)
         self.mainLayout.addWidget(self.__pob, 7, 0)
-        # self.mainLayout.addLayout(self.inputLayout3)
-        # self.inputLayout3.addRow(self.__state, self.__stateEdit)
         self.mainLayout.addWidget(self.__state, 8, 0)
-        self.mainLayout.addWidget(self.__stateEdit, 8, 1, 1, 5)
-        self.mainLayout.addWidget(self.__stateCheck, 9, 1, 1, 5)
-        # self.inputLayout3.addRow(self.__city, self.__cityEdit)
+        self.mainLayout.addWidget(self.__stateEdit, 8, 1, 1, 3)
+        self.mainLayout.addWidget(self.__stateCheck, 9, 1, 1, 3)
         self.mainLayout.addWidget(self.__city, 10, 0)
-        self.mainLayout.addWidget(self.__cityEdit, 10, 1, 1, 5)
-        # self.inputLayout3.addRow(self.__passport, self.__passportEdit)
+        self.mainLayout.addWidget(self.__cityEdit, 10, 1, 1, 3)
         self.mainLayout.addWidget(self.__passport, 11, 0)
-        self.mainLayout.addWidget(self.__passSN, 12, 1)
-        self.mainLayout.addWidget(self.__passportEdit, 12, 2)
-        self.mainLayout.addWidget(self.__passNum, 12, 3)
-        self.mainLayout.addWidget(self.__passportNumEdit, 12, 5)
+        self.mainLayout.addWidget(self.__passSN, 12, 0)
+        self.mainLayout.addWidget(self.__passportEdit, 12, 1)
+        self.mainLayout.addWidget(self.__passNum, 12, 2)
+        self.mainLayout.addWidget(self.__passportNumEdit, 12, 3)
+        self.mainLayout.addWidget(self.__dateOfIssue, 13, 0)
+        self.mainLayout.addWidget(self.__dateOfIssueEdit, 13, 1)
+        self.mainLayout.addWidget(self.__validity, 13, 2)
+        self.mainLayout.addWidget(self.__validityEdit, 13, 3)
 
 
-        self.mainLayout.addWidget(self.__generate, 13, 0, 1, 5)
+        self.mainLayout.addWidget(self.__generate, 15, 0, 1, 4)
 
         self.setCentralWidget(w)
 
@@ -129,6 +122,14 @@ class pdf_generator(QMainWindow):
         city = self.__cityEdit.text().upper()
         passportSN = self.__passportEdit.text()
         passportN = self.__passportNumEdit.text()
+        dateOfIssue = ''
+        for symb in self.__dateOfIssueEdit.text():
+            if symb in tempnum:
+                dateOfIssue += symb
+        validity = ''
+        for symb in self.__validityEdit.text():
+            if symb in tempnum:
+                validity += symb
 
         x = 85.5
         y = 697
@@ -199,8 +200,15 @@ class pdf_generator(QMainWindow):
             c.drawText(text)
             x += 13.3
 
-        x = 366
+        x = 192.8
         y = 578
+        for s in 'ПАСПОРТ':
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+
+        x = 366
         for s in passportSN:
             text = c.beginText(x, y)
             text.textLine(s)
@@ -208,6 +216,45 @@ class pdf_generator(QMainWindow):
             x += 13.3
         x = 432.5
         for s in passportN:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+
+        x = 99.8
+        y = 551
+        for s in dateOfIssue[:2]:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+        x = 152.7
+        for s in dateOfIssue[2:4]:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+        x = 192.7
+        for s in dateOfIssue[4:]:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+
+        x = 312.5
+        for s in dateOfIssue[:2]:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+        x = 365.7
+        for s in dateOfIssue[2:4]:
+            text = c.beginText(x, y)
+            text.textLine(s)
+            c.drawText(text)
+            x += 13.3
+        x = 405.6
+        for s in dateOfIssue[4:]:
             text = c.beginText(x, y)
             text.textLine(s)
             c.drawText(text)
