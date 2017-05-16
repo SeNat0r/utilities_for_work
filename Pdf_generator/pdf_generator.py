@@ -29,16 +29,28 @@ class pdf_generator(QMainWindow):
         self.__birthday = QLabel('Дата рождения:\n(ДДММГГГГ)\n', self)
         self.__sex = QLabel('Пол:', self)
         self.__pob = QLabel('Место рождения:', self)
-        self.__state = QLabel('Государство:', self)
-        self.__city = QLabel('Город:', self)
+        self.__state = QLabel('Государство', self)
+        self.__state.setAlignment(Qt.AlignRight)
+        self.__city = QLabel('Город', self)
+        self.__city.setAlignment(Qt.AlignRight)
         self.__passport = QLabel('Паспорт:', self)
         self.__passSN = QLabel('Серия', self)
         self.__passSN.setAlignment(Qt.AlignRight)
         self.__passNum = QLabel('№', self)
         self.__passNum.setAlignment(Qt.AlignRight)
-        self.__dateOfIssue = QLabel('Дата выдачи:', self)
-        self.__validity = QLabel('Срок действия', self)
+        self.__dateOfIssue = QLabel('Дата выдачи', self)
+        self.__dateOfIssue.setAlignment(Qt.AlignRight)
+        self.__validity = QLabel('Срок', self)
+        self.__validity.setAlignment(Qt.AlignRight)
         self.__permit = QLabel('Документ на право\nпребывания:', self)
+        self.__permitS = QLabel('Серия', self)
+        self.__permitS.setAlignment(Qt.AlignRight)
+        self.__permitN = QLabel('№', self)
+        self.__permitN.setAlignment(Qt.AlignRight)
+        self.__permitDate = QLabel('Дата выдачи', self)
+        self.__permitDate.setAlignment(Qt.AlignRight)
+        self.__permitValidity = QLabel('Срок', self)
+        self.__permitValidity.setAlignment(Qt.AlignRight)
         self.__purpose = QLabel('Цель въезда:', self)
 
         self.__lastNameEdit = QLineEdit(self, maxLength=35)
@@ -54,6 +66,13 @@ class pdf_generator(QMainWindow):
         self.__passportNumEdit = QLineEdit(self, maxLength=9)
         self.__dateOfIssueEdit = QLineEdit(self, maxLength=10)
         self.__validityEdit = QLineEdit(self, maxLength=10)
+        self.__permitBox = QComboBox(self)
+        permits = ['Виза', 'Вид на жительство', 'Разрешение на временное проживание']
+        self.__permitBox.addItems(permits)
+        self.__permitSEdit = QLineEdit(self, maxLength=4)
+        self.__permitNEdit = QLineEdit(self, maxLength=9)
+        self.__permitDateEdit = QLineEdit(self, maxLength=10)
+        self.__permitValidityEdit = QLineEdit(self, maxLength=10)
         self.__purposeBox = QComboBox(self)
         purposes = ['служебная', 'туризм', 'деловая', 'учеба', 'работа', 'частная', 'транзит', 'гуманитарная', 'другая']
         self.__purposeBox.addItems(purposes)
@@ -97,11 +116,21 @@ class pdf_generator(QMainWindow):
         self.mainLayout.addWidget(self.__dateOfIssueEdit, 13, 1)
         self.mainLayout.addWidget(self.__validity, 13, 2)
         self.mainLayout.addWidget(self.__validityEdit, 13, 3)
-        self.mainLayout.addWidget(self.__purpose, 14, 0)
-        self.mainLayout.addWidget(self.__purposeBox, 14, 1)
+        self.mainLayout.addWidget(self.__permit, 14, 0)
+        self.mainLayout.addWidget(self.__permitBox, 14, 1, 1, 3)
+        self.mainLayout.addWidget(self.__permitS, 15, 0)
+        self.mainLayout.addWidget(self.__permitSEdit, 15, 1)
+        self.mainLayout.addWidget(self.__permitN, 15, 2)
+        self.mainLayout.addWidget(self.__permitNEdit, 15, 3)
+        self.mainLayout.addWidget(self.__permitDate, 17, 0)
+        self.mainLayout.addWidget(self.__permitDateEdit, 17, 1)
+        self.mainLayout.addWidget(self.__permitValidity, 18, 0)
+        self.mainLayout.addWidget(self.__permitValidityEdit, 18, 1)
+        self.mainLayout.addWidget(self.__purpose, 19, 0)
+        self.mainLayout.addWidget(self.__purposeBox, 19, 1, 1, 3)
 
 
-        self.mainLayout.addWidget(self.__generate, 15, 0, 1, 4)
+        self.mainLayout.addWidget(self.__generate, 20, 0, 1, 4)
 
         self.setCentralWidget(w)
 
@@ -134,7 +163,17 @@ class pdf_generator(QMainWindow):
         for symb in self.__validityEdit.text():
             if symb in tempnum:
                 validity += symb
-
+        permit = self.__permitBox.currentIndex()
+        permits = self.__permitSEdit.text()
+        permitn = self.__permitNEdit.text()
+        permit_date = ''
+        for symb in self.__permitDateEdit.text():
+            if symb in tempnum:
+                permit_date += symb
+        permit_validity = ''
+        for symb in self.__permitValidityEdit.text():
+            if symb in tempnum:
+                permit_validity += symb
         purpose = self.__purposeBox.currentIndex()
 
         self.fill_text(c, last_name, 85.5, 697)
@@ -164,7 +203,23 @@ class pdf_generator(QMainWindow):
         self.fill_text(c, validity[2:4], 365.7, 551)
         self.fill_text(c, validity[4:], 405.6, 551)
 
+        if permit == 0:
+            self.fill_radio(c, 86, 520)
+        elif permit == 1:
+            self.fill_radio(c, 180, 520)
+        elif permit == 2:
+            self.fill_radio(c, 312, 520)
 
+        self.fill_text(c, permits, 365.7, 520)
+        self.fill_text(c, permitn, 432.1, 520)
+
+        self.fill_text(c, permit_date[:2], 99.8, 493)
+        self.fill_text(c, permit_date[2:4], 152.7, 493)
+        self.fill_text(c, permit_date[4:], 192.7, 493)
+
+        self.fill_text(c, permit_validity[:2], 312.5, 493)
+        self.fill_text(c, permit_validity[2:4], 365.7, 493)
+        self.fill_text(c, permit_validity[4:], 405.6, 493)
 
         c.save()
 
