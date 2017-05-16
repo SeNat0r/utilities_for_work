@@ -52,6 +52,12 @@ class pdf_generator(QMainWindow):
         self.__permitValidity = QLabel('Срок', self)
         self.__permitValidity.setAlignment(Qt.AlignRight)
         self.__purpose = QLabel('Цель въезда:', self)
+        self.__profession = QLabel('Профессия:', self)
+        self.__entry = QLabel('Дата въезда:', self)
+        self.__length = QLabel('Срок пребывания до:', self)
+        self.__migCard = QLabel('Миграционная карта:', self)
+        self.__vakeel = QLabel('Сведения\nо законных\nпредставителях:', self)
+        self.__oldAddress = QLabel('Адрес прежнего\nместа\nпребывания в РФ:', self)
 
         self.__lastNameEdit = QLineEdit(self, maxLength=35)
         self.__firstNameEdit = QLineEdit(self, maxLength=35)
@@ -76,6 +82,10 @@ class pdf_generator(QMainWindow):
         self.__purposeBox = QComboBox(self)
         purposes = ['служебная', 'туризм', 'деловая', 'учеба', 'работа', 'частная', 'транзит', 'гуманитарная', 'другая']
         self.__purposeBox.addItems(purposes)
+        self.__professionEdit = QLineEdit(self, maxLength=35)
+        self.__entryEdit = QLineEdit(self, maxLength=10)
+        self.__lengthEdit = QLineEdit(self, maxLength=10)
+
 
 
 
@@ -124,13 +134,19 @@ class pdf_generator(QMainWindow):
         self.mainLayout.addWidget(self.__permitNEdit, 15, 3)
         self.mainLayout.addWidget(self.__permitDate, 17, 0)
         self.mainLayout.addWidget(self.__permitDateEdit, 17, 1)
-        self.mainLayout.addWidget(self.__permitValidity, 18, 0)
-        self.mainLayout.addWidget(self.__permitValidityEdit, 18, 1)
-        self.mainLayout.addWidget(self.__purpose, 19, 0)
-        self.mainLayout.addWidget(self.__purposeBox, 19, 1, 1, 3)
+        self.mainLayout.addWidget(self.__permitValidity, 17, 2)
+        self.mainLayout.addWidget(self.__permitValidityEdit, 17, 3)
+        self.mainLayout.addWidget(self.__purpose, 18, 0)
+        self.mainLayout.addWidget(self.__purposeBox, 18, 1, 1, 3)
+        self.mainLayout.addWidget(self.__profession, 19, 0)
+        self.mainLayout.addWidget(self.__professionEdit, 19, 1, 1, 3)
+        self.mainLayout.addWidget(self.__entry, 20, 0)
+        self.mainLayout.addWidget(self.__entryEdit, 20, 1)
+        self.mainLayout.addWidget(self.__length, 20, 2)
+        self.mainLayout.addWidget(self.__lengthEdit, 20, 3)
 
 
-        self.mainLayout.addWidget(self.__generate, 20, 0, 1, 4)
+        self.mainLayout.addWidget(self.__generate, 25, 0, 1, 4)
 
         self.setCentralWidget(w)
 
@@ -175,6 +191,15 @@ class pdf_generator(QMainWindow):
             if symb in tempnum:
                 permit_validity += symb
         purpose = self.__purposeBox.currentIndex()
+        profession = self.__professionEdit.text().upper()
+        entry = ''
+        for symb in self.__entryEdit.text():
+            if symb in tempnum:
+                entry += symb
+        length = ''
+        for symb in self.__lengthEdit.text():
+            if symb in tempnum:
+                length += symb
 
         self.fill_text(c, last_name, 85.5, 697)
         self.fill_text(c, first_name, 85.5, 677)
@@ -220,6 +245,35 @@ class pdf_generator(QMainWindow):
         self.fill_text(c, permit_validity[:2], 312.5, 493)
         self.fill_text(c, permit_validity[2:4], 365.7, 493)
         self.fill_text(c, permit_validity[4:], 405.6, 493)
+
+        if purpose == 0:
+            self.fill_radio(c, 139.4, 476)
+        elif purpose == 1:
+            self.fill_radio(c, 180, 476)
+        elif purpose == 2:
+            self.fill_radio(c, 232.6, 476)
+        elif purpose == 3:
+            self.fill_radio(c, 272.5, 476)
+        elif purpose == 4:
+            self.fill_radio(c, 312.4, 476)
+        elif purpose == 5:
+            self.fill_radio(c, 352.3, 476)
+        elif purpose == 6:
+            self.fill_radio(c, 392.2, 476)
+        elif purpose == 7:
+            self.fill_radio(c, 458.7, 476)
+        elif purpose == 8:
+            self.fill_radio(c, 498.6, 476)
+
+        self.fill_text(c, profession, 86, 461)
+
+        self.fill_text(c, entry[:2], 126.4, 440)
+        self.fill_text(c, entry[2:4], 179.6, 440)
+        self.fill_text(c, entry[4:], 219.5, 440)
+
+        self.fill_text(c, length[:2], 405.5, 440)
+        self.fill_text(c, length[2:4], 459.7, 440)
+        self.fill_text(c, length[4:], 499.6, 440)
 
         c.save()
 
