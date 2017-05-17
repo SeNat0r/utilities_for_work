@@ -21,7 +21,7 @@ class pdf_generator(QMainWindow):
 
     def initUi(self):
         self.setWindowTitle('Генератор бланков')
-        self.resize(400, 300)
+        self.resize(400, 900)
 
         self.__lastName = QLabel('Фамилия:', self)
         self.__firstName = QLabel('Имя:', self)
@@ -58,6 +58,17 @@ class pdf_generator(QMainWindow):
         self.__migCard = QLabel('Миграционная карта:', self)
         self.__vakeel = QLabel('Сведения\nо законных\nпредставителях:', self)
         self.__oldAddress = QLabel('Адрес прежнего\nместа\nпребывания в РФ:', self)
+        self.__newAddress = QLabel('Место пребывания:', self)
+        self.__region = QLabel('Область', self)
+        self.__district = QLabel('Район', self)
+        self.__newcity = QLabel('Город', self)
+        self.__street = QLabel('Улица', self)
+        self.__house = QLabel('Дом', self)
+        self.__housing = QLabel('Корпус', self)
+        self.__structure = QLabel('Строение', self)
+        self.__apartment = QLabel('Квартира', self)
+        self.__length2 = QLabel('На срок до', self)
+
 
         self.__lastNameEdit = QLineEdit(self, maxLength=35)
         self.__firstNameEdit = QLineEdit(self, maxLength=35)
@@ -88,6 +99,15 @@ class pdf_generator(QMainWindow):
         self.__migCardEdit = QLineEdit(self, maxLength=11)
         self.__vakeelEdit = QLineEdit(self, maxLength=38)
         self.__oldAddressEdit = QLineEdit(self, maxLength=57)
+        self.__regionEdit = QLineEdit(self, maxLength=33)
+        self.__districtEdit = QLineEdit(self, maxLength=35)
+        self.__newcityEdit = QLineEdit(self, maxLength=33)
+        self.__streetEdit = QLineEdit(self, maxLength=35)
+        self.__houseEdit = QLineEdit(self, maxLength=4)
+        self.__housingEdit = QLineEdit(self, maxLength=4)
+        self.__structureEdit = QLineEdit(self, maxLength=4)
+        self.__apartmentEdit = QLineEdit(self, maxLength=4)
+        self.__length2Edit = QLineEdit(self, maxLength=10)
 
         self.__generate = QPushButton('Генерировать', self)
 
@@ -150,8 +170,27 @@ class pdf_generator(QMainWindow):
         self.mainLayout.addWidget(self.__vakeelEdit, 22, 1, 1, 3)
         self.mainLayout.addWidget(self.__oldAddress, 23, 0)
         self.mainLayout.addWidget(self.__oldAddressEdit, 23, 1, 1, 3)
+        self.mainLayout.addWidget(self.__newAddress, 24, 0, 1, 3)
+        self.mainLayout.addWidget(self.__region, 25, 0)
+        self.mainLayout.addWidget(self.__regionEdit, 25, 1, 1, 3)
+        self.mainLayout.addWidget(self.__district, 26, 0)
+        self.mainLayout.addWidget(self.__districtEdit, 26, 1, 1, 3)
+        self.mainLayout.addWidget(self.__newcity, 27, 0)
+        self.mainLayout.addWidget(self.__newcityEdit, 27, 1, 1, 3)
+        self.mainLayout.addWidget(self.__street, 28, 0)
+        self.mainLayout.addWidget(self.__streetEdit, 28, 1, 1, 3)
+        self.mainLayout.addWidget(self.__house, 29, 0)
+        self.mainLayout.addWidget(self.__houseEdit, 29, 1)
+        self.mainLayout.addWidget(self.__housing, 29, 2)
+        self.mainLayout.addWidget(self.__housingEdit, 29, 3)
+        self.mainLayout.addWidget(self.__structure, 30, 0)
+        self.mainLayout.addWidget(self.__structureEdit, 30, 1)
+        self.mainLayout.addWidget(self.__apartment, 30, 2)
+        self.mainLayout.addWidget(self.__apartmentEdit, 30, 3)
+        self.mainLayout.addWidget(self.__length2, 31, 0)
+        self.mainLayout.addWidget(self.__length2Edit, 31, 1)
 
-        self.mainLayout.addWidget(self.__generate, 24, 0, 1, 4)
+        self.mainLayout.addWidget(self.__generate, 35, 0, 1, 4)
 
         self.setCentralWidget(w)
 
@@ -208,6 +247,18 @@ class pdf_generator(QMainWindow):
         mig_card = self.__migCardEdit.text()
         vakeel = self.__vakeelEdit.text().upper()
         old_address = self.__oldAddressEdit.text().upper()
+        region = self.__regionEdit.text().upper()
+        district = self.__districtEdit.text().upper()
+        newcity = self.__newcityEdit.text().upper()
+        street = self.__streetEdit.text().upper()
+        house = self.__houseEdit.text().upper()
+        housing = self.__housingEdit.text().upper()
+        structure = self.__structureEdit.text().upper()
+        apartament = self.__apartmentEdit.text().upper()
+        length2 = ''
+        for symb in self.__length2Edit.text():
+            if symb in tempnum:
+                length2 += symb
 
         self.fill_text(c, last_name, 85.5, 697)
         self.fill_text(c, first_name, 85.5, 677)
@@ -308,7 +359,17 @@ class pdf_generator(QMainWindow):
         self.fill_text(c, 'ПАСПОРТ', 192.8, 190)
         self.fill_text(c, passportSN, 366, 190)
         self.fill_text(c, passportN, 432.5, 190)
-
+        self.fill_text(c, region, 113.1, 162)
+        self.fill_text(c, district, 85.5, 146)
+        self.fill_text(c, newcity, 112, 129)
+        self.fill_text(c, street, 85.5, 113)
+        self.fill_text(c, house, 72.2, 97)
+        self.fill_text(c, housing, 153, 97)
+        self.fill_text(c, structure, 259.4, 97)
+        self.fill_text(c, apartament, 352.5, 97)
+        self.fill_text(c, length2[:2], 153, 81)
+        self.fill_text(c, length2[2:4], 206.2, 81)
+        self.fill_text(c, length2[4:], 259.4, 81)
 
         c.save()
 
