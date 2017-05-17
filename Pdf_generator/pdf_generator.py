@@ -85,9 +85,9 @@ class pdf_generator(QMainWindow):
         self.__professionEdit = QLineEdit(self, maxLength=35)
         self.__entryEdit = QLineEdit(self, maxLength=10)
         self.__lengthEdit = QLineEdit(self, maxLength=10)
-
-
-
+        self.__migCardEdit = QLineEdit(self, maxLength=11)
+        self.__vakeelEdit = QLineEdit(self, maxLength=38)
+        self.__oldAddressEdit = QLineEdit(self, maxLength=57)
 
         self.__generate = QPushButton('Генерировать', self)
 
@@ -144,9 +144,14 @@ class pdf_generator(QMainWindow):
         self.mainLayout.addWidget(self.__entryEdit, 20, 1)
         self.mainLayout.addWidget(self.__length, 20, 2)
         self.mainLayout.addWidget(self.__lengthEdit, 20, 3)
+        self.mainLayout.addWidget(self.__migCard, 21, 0)
+        self.mainLayout.addWidget(self.__migCardEdit, 21, 1, 1, 3)
+        self.mainLayout.addWidget(self.__vakeel, 22, 0)
+        self.mainLayout.addWidget(self.__vakeelEdit, 22, 1, 1, 3)
+        self.mainLayout.addWidget(self.__oldAddress, 23, 0)
+        self.mainLayout.addWidget(self.__oldAddressEdit, 23, 1, 1, 3)
 
-
-        self.mainLayout.addWidget(self.__generate, 25, 0, 1, 4)
+        self.mainLayout.addWidget(self.__generate, 24, 0, 1, 4)
 
         self.setCentralWidget(w)
 
@@ -200,6 +205,9 @@ class pdf_generator(QMainWindow):
         for symb in self.__lengthEdit.text():
             if symb in tempnum:
                 length += symb
+        mig_card = self.__migCardEdit.text()
+        vakeel = self.__vakeelEdit.text().upper()
+        old_address = self.__oldAddressEdit.text().upper()
 
         self.fill_text(c, last_name, 85.5, 697)
         self.fill_text(c, first_name, 85.5, 677)
@@ -274,6 +282,33 @@ class pdf_generator(QMainWindow):
         self.fill_text(c, length[:2], 405.5, 440)
         self.fill_text(c, length[2:4], 459.7, 440)
         self.fill_text(c, length[4:], 499.6, 440)
+
+        self.fill_text(c, mig_card[:4], 152.7, 425)
+        self.fill_text(c, mig_card[4:], 219.5, 425)
+
+        self.fill_text(c, vakeel[:19], 99.1, 400)
+        self.fill_text(c, vakeel[19:], 99.1, 383)
+
+        self.fill_text(c, old_address[:19], 99.1, 352)
+        self.fill_text(c, old_address[19:38], 99.1, 336)
+        self.fill_text(c, old_address[38:], 99.1, 321)
+
+        # линия отрыва
+
+        self.fill_text(c, last_name, 85.5, 264)
+        self.fill_text(c, first_name, 85.5, 247)
+        self.fill_text(c, citizenship, 99.1, 227)
+        self.fill_text(c, birthday[0:2], 113.1, 205)
+        self.fill_text(c, birthday[2:4], 166, 205)
+        self.fill_text(c, birthday[4:], 206, 205)
+        if self.__maleRadio.isChecked():
+            self.fill_radio(c, 366, 205)
+        else:
+            self.fill_radio(c, 432.5, 205)
+        self.fill_text(c, 'ПАСПОРТ', 192.8, 190)
+        self.fill_text(c, passportSN, 366, 190)
+        self.fill_text(c, passportN, 432.5, 190)
+
 
         c.save()
 
